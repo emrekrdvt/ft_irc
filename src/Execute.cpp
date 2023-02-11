@@ -50,16 +50,18 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 
 void Execute::nick(int &fd, Server *server, std::string message){
 	User *user = server->getUser(fd);
-	user->setNickname(message);
+	if (check::checkNick(user, message, server) == false)
+		return ;
 	if (user->getAuth() == true)
-		server->sender(fd, utils::getProtocol(user) + " NICK " + message);
+            server->sender(fd, utils::getProtocol(user) + " NICK " + message);
+	user->setNickname(message);
 }
 
 void Execute::pass(int &fd, Server *server, std::string message){
 	User *user = server->getUser(fd);
 	if (message[0] != ':')
 	{
-		server->sender(fd, "ERROR :Not enough parameters");
+		utils::err(ERR_NEEDMOREPARAMS(message), user, server);
 		return ;		
 	}
 	auth::authPassword(user, server, message);
@@ -114,10 +116,13 @@ std::string Execute::getCmd(std::string command){
 
 void Execute::execute(int &fd, Server *server, std::string message){
 	std::string command = getCmd(message);
+	if (message.find(" ") == std::string::npos)
+		message = "";
+	else
+		message = message.substr(message.find(" ") + 1);
 	User *user = server->getUser(fd);
 	if (auth::checkAuth(user, server, command) == false)
 		return;
-	message = message.substr(message.find(" ") + 1);
 	for (std::vector<Command>::iterator it = this->commands.begin(); it != this->commands.end(); it++){
 		if (it->first == command){
 			it->second(fd, server, message);

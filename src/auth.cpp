@@ -4,12 +4,11 @@ namespace auth
 {
 	void authPassword(User *user, Server *server, std::string password)
 	{
-		int fd = user->getFd();
 		std::string pass = ":" + server->getPassword();
 		if (password == pass)
 			user->setAuth(true);
 		else
-			server->sender(fd, "ERROR :Password incorrect");
+			utils::err(ERR_PASSWDMISMATCH, user, server);
 	}
 	void handleAuth(User *user, Execute exec, std::string message, Server *server)
 	{
@@ -28,15 +27,14 @@ namespace auth
 	}
 	bool checkAuth(User *user, Server *server, std::string command)
 	{
-		int fd = user->getFd();
 		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK")
 		{
-			server->sender(fd, ":ircserv 451 :You have not registered");
+			utils::err(ERR_NOTREGISTERED, user, server);
 			return false;
 		}
 		if (user->getAuth() == true && command == "PASS")
 		{
-			server->sender(fd, "ERROR :Unauthorized command (already registered)");
+			utils::err(ERR_ALREADYREGISTRED, user, server);
 			return false;
 		}
 		return true;

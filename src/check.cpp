@@ -33,4 +33,39 @@ namespace check
 			error("Port must be a number", PORTNUMBERERROR);
 		}
 	}
+	bool checkNick(User *user, std::string nickname, Server *server)
+	{
+		int fd = user->getFd();
+		if (nickname == "")
+		{
+			utils::err(ERR_NONICKNAMEGIVEN, user, server);
+			return false;
+		}
+		if (server->getUser(nickname) != NULL)
+		{
+			utils::err(ERR_NICKNAMEINUSE(nickname), user, server);
+			return false;
+		}
+		if (isnumber(nickname[0]) == 1)
+		{
+			utils::err(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			return false;
+		}
+		if (nickname.size() > 30)
+		{
+			utils::err(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			return false;
+		}
+		if (nickname.find_first_of(" \t\r\n\v\f") != std::string::npos)
+		{
+			utils::err(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			return false;
+		}
+		if (nickname.find_first_not_of(VALIDCHARS) != std::string::npos)
+		{
+			utils::err(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			return false;
+		}
+		return true;
+	}
 }
