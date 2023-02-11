@@ -31,40 +31,6 @@ int Server::sender(int &fd, std::string msg)
 	return 1;
 }
 
-void Server::handleAuth(User *user, std::string message)
-{
-	int fd = user->getFd();
-	std::vector <std::string> sp = utils::split(message, "\r\n");
-	std::vector<std::string>::iterator it = sp.begin();
-	sp.pop_back();
-	while (it != sp.end())
-	{
-		std::vector<std::string> sp2 = utils::split(*it, " ");
-		std::vector<std::string>::iterator it2 = sp2.begin();
-		while (it2 != sp2.end())
-		{
-			if (sp2[0] == "PASS")
-			{
-				std::string password = ":" + this->getPassword();
-				if (sp2[1] == password)
-					user->setAuth(true);
-				else
-					this->sender(fd, "464 Password incorrect");
-			}
-			else if (sp2[0] == "NICK")
-				user->setNickname(sp2[1]);
-			else if (sp2[0] == "USER")
-				user->setUsername(sp2[1]);
-			it2++;
-		}
-		it++;
-	}
-	if (user->getAuth() == true)
-	{
-		this->sender(fd, ":ircserv 001 " + user->getNickname() + " :Welcome to the Internet Relay Network ");
-	}
-}
-
 void Server::handle_buffer(int &fd)
 {
 	std::string message;
@@ -75,24 +41,16 @@ void Server::handle_buffer(int &fd)
 	while (!strstr(buffer, "\n")) 
 	{
 		memset(buffer, 0, 100);
-		if (recv(fd, buffer, 100, 0) < 0) {
-			if (errno != EWOULDBLOCK)
-			{
-				perror("Error");
-				exit(1);
-			}
-		}
+		check::checkRecv(fd, buffer, 100);
 		message.append(buffer);
 	}
-	std::cout << "Message: \n" << message << std::endl;
+	message = utils::trimBuffer(message);
+	utils::printClient(message, fd);
 	User *user = this->getUser(fd);
 	if (user->getAuth() == false)
-	{
-		this->handleAuth(user, message);
-		return;
-	}
-	message = utils::trimBuffer(message);
-	exec.execute(fd, this, message);
+		auth::handleAuth(user, exec, message, this);
+	else
+		exec.execute(fd, this, message);
 }
 
 void Server::run()
@@ -164,4 +122,36 @@ User *Server::getUser(std::string nickname)
 std::string Server::getPassword()
 {
 	return this->server_pass;
+}
+
+Channel *Server::getChannel(std::string name)
+{
+	for (size_t i = 0; i < this->channels.size(); i++)
+	{
+		if (this->channels[i]->getName() == name)
+			return this->channels[i];
+	}
+	return NULL;
+}
+
+std::vector<Channel*> Server::getChannels()
+{
+	return this->channels;
+}
+
+void Server::addChannel(Channel *channel)
+{
+	this->channels.push_back(channel);
+}
+
+void Server::removeChannel(Channel *channel)
+{
+	for (size_t i = 0; i < this->channels.size(); i++)
+	{
+		if (this->channels[i] == channel)
+		{
+			this->channels.erase(this->channels.begin() + i);
+			return;
+		}
+	}
 }

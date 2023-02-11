@@ -10,9 +10,12 @@
 #include "User.hpp"
 #include "check.hpp"
 #include "utils.hpp"
+#include "auth.hpp"
 #include "Execute.hpp"
+#include "Channel.hpp"
 
 class User;
+class Channel;
 
 class Server
 {
@@ -22,6 +25,7 @@ class Server
 		std::string server_pass;
 		int sockfd;
 		std::vector<User*> users;
+		std::vector<Channel*> channels;
 	public:
 		Server(int port, std::string pass);
 		~Server();
@@ -31,10 +35,13 @@ class Server
 		void run();
 		User* getUser(int fd);
 		User *getUser(std::string nickname);
+		Channel *getChannel(std::string name);
+		void addChannel(Channel *channel);
+		void removeChannel(Channel *channel);
         std::string getPassword();
 		std::string trimBuffer(std::string buffer);
 		void removeUser(User *user);
-		void handleAuth(User *user, std::string message);
+		std::vector<Channel*> getChannels();
 };
 
 

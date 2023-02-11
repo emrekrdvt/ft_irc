@@ -27,4 +27,8 @@ namespace utils
 	{
 		std::cout << "[Client " << fd << "] " << msg << std::endl;
 	}
+	std::string getProtocol(User *user)
+	{
+		return ":" + user->getNickname() + "!" + user->getUsername() + "@" + "localhost ";
+	}
 }

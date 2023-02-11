@@ -53,8 +53,3 @@ void User::setAuth(bool auth)
 {
 	this->auth = auth;
 }
-
-std::string User::getMsg()
-{
-	return ":" + this->nickname + "!" + this->username + "@" + "localhost" + " ";
-}

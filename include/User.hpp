@@ -22,7 +22,6 @@ class User
 		int getFd();
 		bool getAuth();
 		void setAuth(bool auth);
-		std::string getMsg();
 };
 
 #endif

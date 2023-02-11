@@ -12,7 +12,14 @@ namespace check
 	{
 		if (sock == -1)
 			error(function + "() didn't work as excepted", exitCode);
-	}	
+	}
+	void checkRecv(int fd, char *buffer, int size)
+	{
+		if (recv(fd, buffer, size, 0) < 0) {
+			if (errno != EWOULDBLOCK)
+				error("recv() didn't work as excepted", RECVERROR);
+		}
+	}
 	void checkArgs(int argc, char *argv[])
 	{
 		std::string usage = "Usage: " + std::string(argv[0]) + " <port> <password>";
@@ -25,16 +32,5 @@ namespace check
 		} catch (std::exception &e) {
 			error("Port must be a number", PORTNUMBERERROR);
 		}
-	}
-	void checkPassword(User *user, Server *server, std::string password)
-	{
-		int fd = user->getFd();
-		if (password == server->getPassword())
-		{
-			user->setAuth(true);
-			server->sender(fd, "OK");
-		}
-		else
-			server->sender(fd, "KO");
 	}
 }
