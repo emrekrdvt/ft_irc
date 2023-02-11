@@ -35,7 +35,6 @@ namespace check
 	}
 	bool checkNick(User *user, std::string nickname, Server *server)
 	{
-		int fd = user->getFd();
 		if (nickname == "")
 		{
 			utils::err(ERR_NONICKNAMEGIVEN, user, server);
