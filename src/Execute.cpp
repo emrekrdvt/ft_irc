@@ -115,7 +115,7 @@ std::string Execute::getCmd(std::string command){
 void Execute::execute(int &fd, Server *server, std::string message){
 	std::string command = getCmd(message);
 	User *user = server->getUser(fd);
-	if (auth::checkAuth(user, server) == false)
+	if (auth::checkAuth(user, server, command) == false)
 		return;
 	message = message.substr(message.find(" ") + 1);
 	for (std::vector<Command>::iterator it = this->commands.begin(); it != this->commands.end(); it++){

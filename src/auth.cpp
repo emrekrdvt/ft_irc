@@ -26,8 +26,9 @@ namespace auth
 		if (user->getAuth() == true)
 			server->sender(fd, ":ircserv 001 " + user->getNickname() + " :Welcome to the Internet Relay Network ");
 	}
-	bool checkAuth(User *user, Server *server)
+	bool checkAuth(User *user, Server *server, std::string command)
 	{
+		int fd = user->getFd();
 		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK")
 		{
 			server->sender(fd, ":ircserv 451 :You have not registered");
