@@ -2,6 +2,7 @@
 #define EXECUTE_HPP
 
 #include <iostream>
+#include "numeric.hpp"
 #include "Server.hpp"
 
 class Server;

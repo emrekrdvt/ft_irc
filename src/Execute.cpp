@@ -32,8 +32,6 @@ void Execute::join(int &fd, Server *server, std::string message){
 		channel->addUser(user);
 		server->sender(fd, utils::getProtocol(user) + " JOIN " + message);
 	}
-	else
-		server->sender(fd, utils::getProtocol(user) + " :You are already in this channel");
 }
 
 void Execute::part(int &fd, Server *server, std::string message){
@@ -61,7 +59,7 @@ void Execute::pass(int &fd, Server *server, std::string message){
 	User *user = server->getUser(fd);
 	if (message[0] != ':')
 	{
-		utils::err(ERR_NEEDMOREPARAMS(message), user, server);
+		numeric::sendNumeric(ERR_NEEDMOREPARAMS(message), user, server);
 		return ;		
 	}
 	auth::authPassword(user, server, message);
@@ -87,9 +85,16 @@ void Execute::ping(int &fd, Server *server, std::string message){
 }
 
 void Execute::user(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
+	User *user = server->getUser(fd);
+	user->setUsername(message.substr(0, message.find(" ")));
+	message = message.substr(message.find(" ") + 1);
+	std::string modeString = message.substr(0, message.find(" "));
+	message = message.substr(message.find(" ") + 1);
+	user->setMode(std::stoi(modeString));
+	user->setHostname(message.substr(0, message.find(" ")));
+	message = message.substr(message.find(" ") + 1);
+	message = message.substr(3);
+	user->setRealname(message);
 }
 
 void Execute::who(int &fd, Server *server, std::string message){

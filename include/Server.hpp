@@ -13,6 +13,7 @@
 #include "auth.hpp"
 #include "Execute.hpp"
 #include "Channel.hpp"
+#include <unistd.h>
 
 class User;
 class Channel;
@@ -26,6 +27,7 @@ class Server
 		int sockfd;
 		std::vector<User*> users;
 		std::vector<Channel*> channels;
+		std::string hostname;
 	public:
 		Server(int port, std::string pass);
 		~Server();
@@ -42,6 +44,8 @@ class Server
 		std::string trimBuffer(std::string buffer);
 		void removeUser(User *user);
 		std::vector<Channel*> getChannels();
+		std::string getHostname();
+		void setHostname();
 };
 
 

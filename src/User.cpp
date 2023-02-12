@@ -1,7 +1,6 @@
 #include "User.hpp"
 
 // Constructors and destructors
-
 User::User(){}
 
 User::~User(){}
@@ -17,7 +16,6 @@ std::string User::getUsername()
 {
 	return (this->username);
 }
-
 
 std::string User::getNickname()
 {
@@ -52,4 +50,34 @@ bool User::getAuth()
 void User::setAuth(bool auth)
 {
 	this->auth = auth;
+}
+
+std::string User::getHostname()
+{
+	return (this->hostname);
+}
+
+void User::setHostname(std::string hostname)
+{
+	this->hostname = hostname;
+}
+
+void User::setMode(int mode)
+{
+	this->mode = mode;
+}
+
+int User::getMode()
+{
+	return (this->mode);
+}
+
+std::string User::getRealname()
+{
+	return (this->realname);
+}
+
+void User::setRealname(std::string realname)
+{
+	this->realname = realname;
 }

@@ -1,14 +1,5 @@
 #include "utils.hpp"
 
-Numeric makeNumeric(int code, std::string message)
-{
-	Numeric numeric;
-
-	numeric.first = message;
-	numeric.second = code;
-	return (numeric);
-}
-
 namespace utils
 {
 	std::string trimBuffer(std::string buffer)
@@ -38,12 +29,6 @@ namespace utils
 	}
 	std::string getProtocol(User *user)
 	{
-		return ":" + user->getNickname() + "!" + user->getUsername() + "@" + "localhost ";
-	}
-	void err(Numeric msg, User *user, Server *server)
-	{
-		int fd = user->getFd();
-		server->sender(fd, "ERROR " + msg.first);
-		std::cout << "[Server] ERROR " << msg.second << " " + msg.first << std::endl;
+		return ":" + user->getNickname() + "!" + user->getUsername() + "@" + "localhost";
 	}
 }

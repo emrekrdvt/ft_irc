@@ -36,12 +36,12 @@ void Server::handle_buffer(int &fd)
 	std::string message;
 	Execute exec;
 
-	char buffer[100];
-	memset(buffer, 0, 100);
+	char buffer[1024];
+	memset(buffer, 0, 1024);
 	while (!strstr(buffer, "\n")) 
 	{
-		memset(buffer, 0, 100);
-		check::checkRecv(fd, buffer, 100);
+		memset(buffer, 0, 1024);
+		check::checkRecv(fd, buffer, 1024);
 		message.append(buffer);
 	}
 	message = utils::trimBuffer(message);
@@ -59,7 +59,9 @@ void Server::run()
 	std::vector<pollfd> fds(1);
 	fds[0].fd = this->sockfd;
 	fds[0].events = POLLIN;
-	std::cout << "Server is Running!" << std::endl;
+	this->setHostname();
+	std::cout << "Hostname: " << hostname << std::endl;
+	std::cout << "Server started on port " << this->port << std::endl;
 	while (true)
 	{
 		int ready = poll(&fds[0], fds.size(), 1);
@@ -154,4 +156,17 @@ void Server::removeChannel(Channel *channel)
 			return;
 		}
 	}
+}
+
+std::string Server::getHostname()
+{
+	return this->hostname;
+}
+
+void Server::setHostname()
+{
+	char hostname_c[1024];
+	int rtn = gethostname(hostname_c, 1024);
+	check::checkSocket(rtn, "gethostname", GETHOSTNAMEERROR);
+	this->hostname = hostname_c;
 }

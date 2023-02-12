@@ -8,7 +8,7 @@ namespace auth
 		if (password == pass)
 			user->setAuth(true);
 		else
-			utils::err(ERR_PASSWDMISMATCH, user, server);
+			numeric::sendNumeric(ERR_PASSWDMISMATCH, user, server);
 	}
 	void handleAuth(User *user, Execute exec, std::string message, Server *server)
 	{
@@ -29,12 +29,12 @@ namespace auth
 	{
 		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK")
 		{
-			utils::err(ERR_NOTREGISTERED, user, server);
+			numeric::sendNumeric(ERR_NOTREGISTERED, user, server);
 			return false;
 		}
 		if (user->getAuth() == true && command == "PASS")
 		{
-			utils::err(ERR_ALREADYREGISTRED, user, server);
+			numeric::sendNumeric(ERR_ALREADYREGISTRED, user, server);
 			return false;
 		}
 		return true;

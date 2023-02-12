@@ -16,6 +16,7 @@
 #define POLLERROR 9
 #define ACCEPTERROR 10
 #define RECVERROR 11
+#define GETHOSTNAMEERROR 12
 
 class Server;
 
