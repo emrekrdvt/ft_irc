@@ -29,6 +29,7 @@ namespace check
 	void checkArgs(int argc, char *argv[]);
 	void checkRecv(int fd, char *buffer, int size);
 	bool checkNick(User *user, std::string nickname, Server *server);
+	bool checkUser(std::string message, User *user, Server *server);
 }
 
 #endif

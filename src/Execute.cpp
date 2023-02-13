@@ -102,15 +102,8 @@ void Execute::ping(int &fd, Server *server, std::string message){
 
 void Execute::user(int &fd, Server *server, std::string message){
 	User *user = server->getUser(fd);
-	user->setUsername(message.substr(0, message.find(" ")));
-	message = message.substr(message.find(" ") + 1);
-	std::string modeString = message.substr(0, message.find(" "));
-	message = message.substr(message.find(" ") + 1);
-	user->setMode(std::stoi(modeString));
-	user->setHostname(message.substr(0, message.find(" ")));
-	message = message.substr(message.find(" ") + 1);
-	message = message.substr(3);
-	user->setRealname(message);
+	if (check::checkUser(message, user, server) == false)
+		return ;
 	user->setAuths("USER", true);
 }
 
