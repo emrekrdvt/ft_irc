@@ -19,7 +19,6 @@ namespace auth
 		while (it != ite)
 		{
 			message = utils::trimBuffer(*it);
-			std::cout << "message: " << message << std::endl;
 			exec.execute(fd, server, message);
 			it++;
 		}
@@ -29,8 +28,10 @@ namespace auth
 			std::string nickname = user->getNickname();
 			std::string username = user->getUsername();
 			std::string hostname = server->getHostname();
+			std::string time = server->getCreatedTime();
 			numeric::sendNumeric(RPL_WELCOME(nickname, username, hostname), user, server);
 			numeric::sendNumeric(RPL_YOURHOST(nickname, hostname), user, server);
+			numeric::sendNumeric(RPL_CREATED(nickname, time), user, server);
 		}
 	}
 	bool checkAuth(User *user, Server *server, std::string command)

@@ -18,6 +18,8 @@
 class User;
 class Channel;
 
+#define VERSION "v1.0.0"
+
 class Server
 {
 	private:
@@ -28,24 +30,24 @@ class Server
 		std::vector<User*> users;
 		std::vector<Channel*> channels;
 		std::string hostname;
+		std::string createdTime;
 	public:
 		Server(int port, std::string pass);
 		~Server();
 		std::vector<User*> getUsers();
 		void handle_buffer(int &fd);
 		int sender(int &fd, std::string msg);
+		void start();
 		void run();
 		User* getUser(int fd);
 		User *getUser(std::string nickname);
 		Channel *getChannel(std::string name);
 		void addChannel(Channel *channel);
-		void removeChannel(Channel *channel);
         std::string getPassword();
-		std::string trimBuffer(std::string buffer);
-		void removeUser(User *user);
 		std::vector<Channel*> getChannels();
 		std::string getHostname();
 		void setHostname();
+		std::string getCreatedTime();
 };
 
 

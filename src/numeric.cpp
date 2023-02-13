@@ -14,6 +14,6 @@ namespace numeric
 	{
 		int fd = user->getFd();
 		server->sender(fd, ":" + server->getHostname() + " " + reply.first + " " + user->getNickname() + " " + reply.second);
-		std::cout << server->getHostname() + " " + reply.first + " " + user->getNickname() + " " + reply.second << std::endl;
+		utils::printServer(server->getHostname() + " " + reply.first + " " + user->getNickname() + " " + reply.second, server);
 	}
 }

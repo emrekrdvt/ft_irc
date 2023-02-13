@@ -6,9 +6,9 @@ Execute::Execute(){
     this->commands.push_back(Command("PART", &Execute::part));
     this->commands.push_back(Command("PRIVMSG", &Execute::privmsg));
     this->commands.push_back(Command("QUIT", &Execute::quit));
-    this->commands.push_back(Command("NICK", &Execute::nick));
-    this->commands.push_back(Command("PING", &Execute::ping));
-    this->commands.push_back(Command("KICK", &Execute::kick));
+	this->commands.push_back(Command("NICK", &Execute::nick));
+	this->commands.push_back(Command("PING", &Execute::ping));
+	this->commands.push_back(Command("KICK", &Execute::kick));
 	this->commands.push_back(Command("PASS", &Execute::pass));
 	this->commands.push_back(Command("USER", &Execute::user));
 	this->commands.push_back(Command("CAP", &Execute::cap));
@@ -32,21 +32,6 @@ void Execute::join(int &fd, Server *server, std::string message){
 	{
 		channel->addUser(user);
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
-	}
-}
-
-void Execute::cap(int &fd, Server *server, std::string message){
-	static bool check;
-	(void)message;
-	if (check == false)
-	{
-		server->sender(fd, "CAP * LS :multi-prefix sasl");
-		check = true;
-	}
-	else
-	{
-		server->sender(fd, "CAP * ACK multi-prefix");
-		check = false;
 	}
 }
 
@@ -123,6 +108,21 @@ void Execute::mode(int &fd, Server *server, std::string message){
 	(void)message;
 	(void)server;
 	(void)fd;
+}
+
+void Execute::cap(int &fd, Server *server, std::string message){
+	static bool check;
+	(void)message;
+	if (check == false)
+	{
+		server->sender(fd, "CAP * LS :multi-prefix sasl");
+		check = true;
+	}
+	else
+	{
+		server->sender(fd, "CAP * ACK multi-prefix");
+		check = false;
+	}
 }
 
 std::string Execute::getCmd(std::string command){

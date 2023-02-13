@@ -25,22 +25,43 @@ namespace utils
 	void printClient(std::string msg, int fd, Server *server)
 	{
 		User *user = server->getUser(fd);
-		if (user->getAuth() == false)
-			std::cout << "[Client " << fd << "]\n" << " " + msg << std::endl;
-		else
+		std::cout << " ---------------------------------------" << std::endl;
+		std::cout << " [Client " << fd << "]" << std::endl;
+		if (user->getAuth() == true)
 		{
-			std::cout << "----------------------------------------" << std::endl;
-			std::cout << "[Client " << fd << "]" << std::endl;
 			std::cout << " Nickname: " << user->getNickname() << std::endl;
 			std::cout << " Username: " << user->getUsername() << std::endl;
 			std::cout << " Realname: " << user->getRealname() << std::endl;
 			std::cout << " Hostname: " << user->getHostname() << std::endl;
-			std::cout << " Message: " << msg << std::endl;
-			std::cout << "----------------------------------------" << std::endl;
+			
 		}
+		std::cout << " Message: " << msg << std::endl;
+		std::cout << " Date: " << utils::getTime() << std::endl;
+		std::cout << " ---------------------------------------\n" << std::endl;
+	}
+	void printServer(std::string msg, Server *server)
+	{
+		std::cout << " ---------------------------------------" << std::endl;
+		std::cout << " [Server " << server->getHostname() << "]" << std::endl;
+		std::cout << " Message: " << msg << std::endl;
+		std::cout << " Created: " << server->getCreatedTime() << std::endl;
+		std::cout << " Version: " << VERSION << std::endl;
+		std::cout << " ---------------------------------------\n" << std::endl;
 	}
 	std::string getPrefix(User *user)
 	{
 		return ":" + user->getNickname() + "!" + user->getUsername() + "@" + user->getHostname();
+	}
+	std::string getTime()
+	{
+		time_t rawtime;
+		struct tm *timeinfo;
+		char buffer[80];
+
+		std::time(&rawtime);
+		timeinfo = localtime(&rawtime);
+
+		strftime(buffer, 80, "%d-%m-%Y %I:%M:%S", timeinfo);
+		return std::string(buffer);
 	}
 }

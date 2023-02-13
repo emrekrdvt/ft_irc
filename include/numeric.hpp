@@ -12,7 +12,8 @@ typedef std::pair<std::string, std::string> Numeric;
 
 //RPL
 #define RPL_WELCOME(nick, user, host) numeric::makeNumeric("001", ":Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host)
-#define RPL_YOURHOST(nick, host) numeric::makeNumeric("002", ":Your host is " + host + ", running version ircd-irc2")
+#define RPL_YOURHOST(nick, host) numeric::makeNumeric("002", ":Your host is " + host + ", running version " + VERSION)
+#define RPL_CREATED(nick, date) numeric::makeNumeric("003", ":This server was created " + date)
 
 //ERR
 #define ERR_ERRONEUSNICKNAME(nick) numeric::makeNumeric("432", nick + " :Erroneus nickname")

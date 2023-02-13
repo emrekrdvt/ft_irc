@@ -45,12 +45,21 @@ void Server::handle_buffer(int &fd)
 		message.append(buffer);
 	}
 	message = utils::trimBuffer(message);
-	utils::printClient(message, fd, this);
+	std::vector<std::string> split = utils::split(message, "\n");
+	for (size_t i = 0; i < split.size(); i++)
+		utils::printClient(split[i], fd, this);
 	User *user = this->getUser(fd);
 	if (user->getAuth() == false)
 		auth::handleAuth(user, exec, message, this);
 	else
 		exec.execute(fd, this, message);
+}
+
+void Server::start()
+{
+	this->setHostname();
+	this->createdTime = utils::getTime();
+	utils::printServer("Server started on " + std::to_string(port), this);
 }
 
 void Server::run()
@@ -59,8 +68,7 @@ void Server::run()
 	std::vector<pollfd> fds(1);
 	fds[0].fd = this->sockfd;
 	fds[0].events = POLLIN;
-	this->setHostname();
-	std::cout << "Server started on " << this->getHostname() << ":" << this->port << std::endl;
+	this->start();
 	while (true)
 	{
 		int ready = poll(&fds[0], fds.size(), 1);
@@ -145,18 +153,6 @@ void Server::addChannel(Channel *channel)
 	this->channels.push_back(channel);
 }
 
-void Server::removeChannel(Channel *channel)
-{
-	for (size_t i = 0; i < this->channels.size(); i++)
-	{
-		if (this->channels[i] == channel)
-		{
-			this->channels.erase(this->channels.begin() + i);
-			return;
-		}
-	}
-}
-
 std::string Server::getHostname()
 {
 	return this->hostname;
@@ -168,4 +164,9 @@ void Server::setHostname()
 	int rtn = gethostname(hostname_c, 1024);
 	check::checkSocket(rtn, "gethostname", GETHOSTNAMEERROR);
 	this->hostname = hostname_c;
+}
+
+std::string Server::getCreatedTime()
+{
+	return this->createdTime;
 }
