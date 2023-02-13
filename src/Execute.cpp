@@ -25,12 +25,12 @@ void Execute::join(int &fd, Server *server, std::string message){
 		channel->addUser(user);
 		channel->setOwner(user);
 		channel->addOperator(user);
-		server->sender(fd, utils::getProtocol(user) + " JOIN " + message);
+		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
 	}
 	else if (channel->getUser(user) == NULL)
 	{
 		channel->addUser(user);
-		server->sender(fd, utils::getProtocol(user) + " JOIN " + message);
+		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
 	}
 }
 
@@ -51,7 +51,7 @@ void Execute::nick(int &fd, Server *server, std::string message){
 	if (check::checkNick(user, message, server) == false)
 		return ;
 	if (user->getAuth() == true)
-            server->sender(fd, utils::getProtocol(user) + " NICK " + message);
+        server->sender(fd, utils::getPrefix(user) + " NICK " + message);
 	user->setNickname(message);
 }
 

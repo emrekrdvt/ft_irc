@@ -45,7 +45,7 @@ void Server::handle_buffer(int &fd)
 		message.append(buffer);
 	}
 	message = utils::trimBuffer(message);
-	utils::printClient(message, fd);
+	utils::printClient(message, fd, this);
 	User *user = this->getUser(fd);
 	if (user->getAuth() == false)
 		auth::handleAuth(user, exec, message, this);
@@ -60,8 +60,7 @@ void Server::run()
 	fds[0].fd = this->sockfd;
 	fds[0].events = POLLIN;
 	this->setHostname();
-	std::cout << "Hostname: " << hostname << std::endl;
-	std::cout << "Server started on port " << this->port << std::endl;
+	std::cout << "Server started on " << this->getHostname() << ":" << this->port << std::endl;
 	while (true)
 	{
 		int ready = poll(&fds[0], fds.size(), 1);
@@ -82,7 +81,7 @@ void Server::run()
 				temp.events = POLLIN;
 				fds.push_back(temp);
 				this->users.push_back(new User(temp.fd));
-				utils::printClient("New client connected", temp.fd);
+				utils::printClient("New client connected", temp.fd, this);
 			}
 			for (size_t i = 1; i < fds.size(); i++)
 			{

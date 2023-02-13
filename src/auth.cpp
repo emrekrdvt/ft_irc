@@ -23,7 +23,13 @@ namespace auth
 			it++;
 		}
 		if (user->getAuth() == true)
-			server->sender(fd, ":ircserv 001 " + user->getNickname() + " :Welcome to the Internet Relay Network ");
+		{
+			std::string nickname = user->getNickname();
+			std::string username = user->getUsername();
+			std::string hostname = server->getHostname();
+			numeric::sendNumeric(RPL_WELCOME(nickname, username, hostname), user, server);
+			numeric::sendNumeric(RPL_YOURHOST(nickname, hostname), user, server);
+		}
 	}
 	bool checkAuth(User *user, Server *server, std::string command)
 	{

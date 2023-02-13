@@ -5,7 +5,7 @@ namespace utils
 	std::string trimBuffer(std::string buffer)
 	{
 		std::string trimmed = buffer;
-		trimmed.erase(trimmed.find_last_not_of("\n\r") + 1);
+		trimmed.erase(trimmed.find_last_not_of("\r\n") + 1);
 		return trimmed;
 	}
 
@@ -23,12 +23,24 @@ namespace utils
 		result.push_back(str);
 		return result;
 	}
-	void printClient(std::string msg, int fd)
+	void printClient(std::string msg, int fd, Server *server)
 	{
-		std::cout << "[Client " << fd << "] " << msg << std::endl;
+		User *user = server->getUser(fd);
+		if (user->getAuth() == false)
+			std::cout << " [Client " << fd << "]\n" << " " + msg << std::endl;
+		else
+		{
+			std::cout << "----------------------------------------" << std::endl;
+			std::cout << "[Client " << fd << "]" << std::endl;
+			std::cout << " Nickname: " << user->getNickname() << std::endl;
+			std::cout << " Username: " << user->getUsername() << std::endl;
+			std::cout << " Realname: " << user->getRealname() << std::endl;
+			std::cout << " Message: " << msg << std::endl;
+			std::cout << "----------------------------------------" << std::endl;
+		}
 	}
-	std::string getProtocol(User *user)
+	std::string getPrefix(User *user)
 	{
-		return ":" + user->getNickname() + "!" + user->getUsername() + "@" + "localhost";
+		return ":" + user->getNickname() + "!" + user->getUsername() + "@" + user->getHostname();
 	}
 }
