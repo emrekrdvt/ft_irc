@@ -18,7 +18,10 @@
 class User;
 class Channel;
 
-#define VERSION "v1.0.0"
+# define VERSION "v1.0.0"
+# define MAX_USERS 1000
+# define MAX_BUFFER_SIZE 512
+
 
 class Server
 {
@@ -35,7 +38,7 @@ class Server
 		Server(int port, std::string pass);
 		~Server();
 		std::vector<User*> getUsers();
-		void handle_buffer(int &fd);
+		int handle_buffer(int &fd);
 		int sender(int &fd, std::string msg);
 		void start();
 		void run();
@@ -48,6 +51,10 @@ class Server
 		std::string getHostname();
 		void setHostname();
 		std::string getCreatedTime();
+		void removeUser(User *user);
+		void removeChannel(Channel *channel);
+
+
 };
 
 

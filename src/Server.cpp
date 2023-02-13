@@ -31,7 +31,7 @@ int Server::sender(int &fd, std::string msg)
 	return 1;
 }
 
-void Server::handle_buffer(int &fd)
+int Server::handle_buffer(int &fd)
 {
 	std::string message;
 	Execute exec;
@@ -53,6 +53,7 @@ void Server::handle_buffer(int &fd)
 		auth::handleAuth(user, exec, message, this);
 	else
 		exec.execute(fd, this, message);
+	return 1;
 }
 
 void Server::start()
@@ -65,9 +66,10 @@ void Server::start()
 void Server::run()
 {
 	int rtn;
+	int recv_rtn = 1;
 	std::vector<pollfd> fds(1);
 	fds[0].fd = this->sockfd;
-	fds[0].events = POLLIN;
+	fds[0].events = POLLIN;	
 	this->start();
 	while (true)
 	{
@@ -94,7 +96,12 @@ void Server::run()
 			for (size_t i = 1; i < fds.size(); i++)
 			{
 				if (fds[i].revents & POLLIN)
-					handle_buffer(fds[i].fd);
+					recv_rtn = handle_buffer(fds[i].fd);
+				if (recv_rtn == 0)
+					{
+						fds.erase(fds.begin() + i);
+						break;
+					}
 			}
 		}
 	}
@@ -169,4 +176,29 @@ void Server::setHostname()
 std::string Server::getCreatedTime()
 {
 	return this->createdTime;
+}
+
+void Server::removeUser(User *user)
+{
+	std::vector<User*>::iterator it;
+	for (it = this->users.begin(); it != this->users.end(); it++)
+	{
+		if ((*it)->getFd() == user->getFd())
+		{
+			this->users.erase(it);
+			break;
+		}
+	}
+}
+
+void Server::removeChannel(Channel *channel)
+{
+	for (size_t i = 0; i < this->channels.size(); i++)
+	{
+		if (this->channels[i] == channel)
+		{
+			this->channels.erase(this->channels.begin() + i);
+			return;
+		}
+	}
 }
