@@ -25,28 +25,28 @@ namespace utils
 	void printClient(std::string msg, int fd, Server *server)
 	{
 		User *user = server->getUser(fd);
-		std::cout << " ---------------------------------------" << std::endl;
-		std::cout << " [Client " << fd << "]" << std::endl;
+		std::string color = utils::getColor(fd);
+		std::cout << " ----------------------------------------" << std::endl;
+		std::cout << color << " [Client " << fd << "]" << DEFAULT << std::endl;
 		if (user->getAuth() == true)
 		{
 			std::cout << " Nickname: " << user->getNickname() << std::endl;
 			std::cout << " Username: " << user->getUsername() << std::endl;
 			std::cout << " Realname: " << user->getRealname() << std::endl;
 			std::cout << " Hostname: " << user->getHostname() << std::endl;
-			
 		}
-		std::cout << " Message: " << msg << std::endl;
 		std::cout << " Date: " << utils::getTime() << std::endl;
-		std::cout << " ---------------------------------------\n" << std::endl;
+		std::cout << "\n " << MAGENTA + msg + DEFAULT  << std::endl;
+		std::cout << " ----------------------------------------\n" << std::endl;
 	}
 	void printServer(std::string msg, Server *server)
 	{
-		std::cout << " ---------------------------------------" << std::endl;
-		std::cout << " [Server " << server->getHostname() << "]" << std::endl;
-		std::cout << " Message: " << msg << std::endl;
+		std::cout << " ----------------------------------------" << std::endl;
+		std::cout << GREEN << " [Server " << server->getHostname() << "]"  << DEFAULT << std::endl;
 		std::cout << " Created: " << server->getCreatedTime() << std::endl;
 		std::cout << " Version: " << VERSION << std::endl;
-		std::cout << " ---------------------------------------\n" << std::endl;
+		std::cout << "\n " << MAGENTA + msg  + DEFAULT << std::endl;
+		std::cout << " ----------------------------------------\n" << std::endl;
 	}
 	std::string getPrefix(User *user)
 	{
@@ -63,5 +63,12 @@ namespace utils
 
 		strftime(buffer, 80, "%d-%m-%Y %I:%M:%S", timeinfo);
 		return std::string(buffer);
+	}
+	std::string getColor(int fd)
+	{
+		srand(time(NULL));
+		std::string colors[] = {RED, YELLOW, BLUE};
+		std::string color = colors[fd % 3];
+		return color;
 	}
 }

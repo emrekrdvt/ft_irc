@@ -16,14 +16,17 @@ typedef std::pair<std::string, std::string> Numeric;
 #define RPL_CREATED(nick, date) numeric::makeNumeric("003", ":This server was created " + date)
 
 //ERR
+#define ERR_NOSUCHSERVER(server) numeric::makeNumeric("402", server + " :No such server")
+#define ERR_NOORIGIN numeric::makeNumeric("409", ":No origin specified")
+#define ERR_UNKNOWNCOMMAND(cmd) numeric::makeNumeric("421", cmd + " :Unknown command")
+#define ERR_NONICKNAMEGIVEN numeric::makeNumeric("431", ":No nickname given")
 #define ERR_ERRONEUSNICKNAME(nick) numeric::makeNumeric("432", nick + " :Erroneus nickname")
 #define ERR_NICKNAMEINUSE(nick) numeric::makeNumeric("433", nick + " :Nickname is already in use")
 #define ERR_NEEDMOREPARAMS(cmd) numeric::makeNumeric("461", cmd + " :Not enough parameters")
 #define ERR_ALREADYREGISTRED numeric::makeNumeric("462", ":Unauthorized command (already registered)")
 #define ERR_PASSWDMISMATCH numeric::makeNumeric("464", ":Password incorrect")
-#define ERR_UNKNOWNCOMMAND(cmd) numeric::makeNumeric("421", cmd + " :Unknown command")
 #define ERR_NOTREGISTERED numeric::makeNumeric("451", ":You have not registered")
-#define ERR_NONICKNAMEGIVEN numeric::makeNumeric("431", ":No nickname given")
+
 
 namespace numeric
 {

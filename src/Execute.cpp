@@ -82,6 +82,16 @@ void Execute::quit(int &fd, Server *server, std::string message){
 }
 
 void Execute::ping(int &fd, Server *server, std::string message){
+	if (message == "")
+	{
+		numeric::sendNumeric(ERR_NOORIGIN, server->getUser(fd), server);
+		return ;
+	}
+	if (message != server->getHostname())
+	{
+		numeric::sendNumeric(ERR_NOSUCHSERVER(message), server->getUser(fd), server);
+		return ;
+	}
 	server->sender(fd, "PONG " + message);
 }
 

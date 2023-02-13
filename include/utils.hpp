@@ -5,9 +5,18 @@
 #include <vector>
 #include "User.hpp"
 #include "Server.hpp"
+#include <iomanip>
 
 class Server;
 class User;
+
+//COLORS
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
+#define MAGENTA "\033[35m"
+#define DEFAULT "\033[0m"
 
 namespace utils
 {
@@ -17,6 +26,7 @@ namespace utils
 	void printServer(std::string msg, Server *server);
 	std::string getPrefix(User *user);
 	std::string getTime();
+	std::string getColor(int fd);
 }
 
 #endif
