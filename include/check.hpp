@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Server.hpp"
+#include "User.hpp"
 
 #define VALIDCHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]\\`_^{|}-"
 #define USAGEERROR 1
@@ -19,6 +20,7 @@
 #define GETHOSTNAMEERROR 12
 
 class Server;
+class User;
 
 namespace check
 {

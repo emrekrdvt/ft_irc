@@ -8,6 +8,9 @@ User::~User(){}
 User::User(int fd){
 	this->fd = fd;
 	this->auth = false;
+	auths[0] = Auth("NICK", false);
+	auths[1] = Auth("USER", false);
+	auths[2] = Auth("PASS", false);
 }
 
 // Getters and setters
@@ -80,4 +83,28 @@ std::string User::getRealname()
 void User::setRealname(std::string realname)
 {
 	this->realname = realname;
+}
+
+void User::setAuths(std::string command, bool auth)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (auths[i].first == command)
+			auths[i].second = auth;
+	}
+}
+
+bool User::checkAuths()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (auths[i].second == false)
+			return (false);
+	}
+	return (true);
+}
+
+Auth *User::getAuths()
+{
+	return (this->auths);
 }

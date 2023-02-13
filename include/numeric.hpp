@@ -5,13 +5,16 @@
 #include "User.hpp"
 #include "Server.hpp"
 
+class Server;
+class User;
+
 typedef std::pair<std::string, std::string> Numeric;
 
 //RPL
 #define RPL_WELCOME(nick, user, host) numeric::makeNumeric("001", ":Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host)
 #define RPL_YOURHOST(nick, host) numeric::makeNumeric("002", ":Your host is " + host + ", running version ircd-irc2")
 
-//errors
+//ERR
 #define ERR_ERRONEUSNICKNAME(nick) numeric::makeNumeric("432", nick + " :Erroneus nickname")
 #define ERR_NICKNAMEINUSE(nick) numeric::makeNumeric("433", nick + " :Nickname is already in use")
 #define ERR_NEEDMOREPARAMS(cmd) numeric::makeNumeric("461", cmd + " :Not enough parameters")

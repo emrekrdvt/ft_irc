@@ -6,7 +6,7 @@ namespace auth
 	{
 		std::string pass = ":" + server->getPassword();
 		if (password == pass)
-			user->setAuth(true);
+			user->setAuths("PASS", true);
 		else
 			numeric::sendNumeric(ERR_PASSWDMISMATCH, user, server);
 	}
@@ -19,11 +19,13 @@ namespace auth
 		while (it != ite)
 		{
 			message = utils::trimBuffer(*it);
+			std::cout << "message: " << message << std::endl;
 			exec.execute(fd, server, message);
 			it++;
 		}
-		if (user->getAuth() == true)
+		if (user->checkAuths() == true)
 		{
+			user->setAuth(true);
 			std::string nickname = user->getNickname();
 			std::string username = user->getUsername();
 			std::string hostname = server->getHostname();
@@ -33,12 +35,22 @@ namespace auth
 	}
 	bool checkAuth(User *user, Server *server, std::string command)
 	{
-		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK")
+		int fd = user->getFd();
+		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK" && command != "PING" && command != "CAP")
 		{
 			numeric::sendNumeric(ERR_NOTREGISTERED, user, server);
+			Auth *auths = user->getAuths();
+			for (int i = 0; i < 3; i++)
+			{
+				if (auths[i].second == false)
+				{
+					server->sender(fd, "ERROR :You must send " + auths[i].first + " before sending any command");
+					return false;
+				}
+			}
 			return false;
 		}
-		if (user->getAuth() == true && command == "PASS")
+		if (user->getAuth() == true && (command == "PASS" || command == "USER"))
 		{
 			numeric::sendNumeric(ERR_ALREADYREGISTRED, user, server);
 			return false;

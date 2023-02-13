@@ -11,6 +11,7 @@ Execute::Execute(){
     this->commands.push_back(Command("KICK", &Execute::kick));
 	this->commands.push_back(Command("PASS", &Execute::pass));
 	this->commands.push_back(Command("USER", &Execute::user));
+	this->commands.push_back(Command("CAP", &Execute::cap));
 	//this->commands.push_back(Command("WHO", &Execute::who));
 	//this->commands.push_back(Command("NOTICE", &Execute::notice));
 	//this->commands.push_back(Command("MODE", &Execute::mode));
@@ -34,6 +35,21 @@ void Execute::join(int &fd, Server *server, std::string message){
 	}
 }
 
+void Execute::cap(int &fd, Server *server, std::string message){
+	static bool check;
+	(void)message;
+	if (check == false)
+	{
+		server->sender(fd, "CAP * LS :multi-prefix sasl");
+		check = true;
+	}
+	else
+	{
+		server->sender(fd, "CAP * ACK multi-prefix");
+		check = false;
+	}
+}
+
 void Execute::part(int &fd, Server *server, std::string message){
 	(void)message;
 	(void)server;
@@ -52,6 +68,8 @@ void Execute::nick(int &fd, Server *server, std::string message){
 		return ;
 	if (user->getAuth() == true)
         server->sender(fd, utils::getPrefix(user) + " NICK " + message);
+	else
+		user->setAuths("NICK", true);
 	user->setNickname(message);
 }
 
@@ -79,9 +97,7 @@ void Execute::quit(int &fd, Server *server, std::string message){
 }
 
 void Execute::ping(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
+	server->sender(fd, "PONG " + message);
 }
 
 void Execute::user(int &fd, Server *server, std::string message){
@@ -95,6 +111,7 @@ void Execute::user(int &fd, Server *server, std::string message){
 	message = message.substr(message.find(" ") + 1);
 	message = message.substr(3);
 	user->setRealname(message);
+	user->setAuths("USER", true);
 }
 
 void Execute::who(int &fd, Server *server, std::string message){

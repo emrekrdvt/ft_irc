@@ -3,6 +3,8 @@
 
 # include <iostream>
 
+typedef std::pair<std::string, bool> Auth;
+
 class User
 {
 	private:
@@ -13,24 +15,28 @@ class User
 		int	fd;
 		bool auth;
 		int mode;
+		Auth auths[3];
 	public:
 		User();
 		User(int fd);
 		~User();
 		std::string getUsername();
 		std::string getNickname();
-		void setUsername(std::string username);
-		void setNickname(std::string nickname);
-		void setHostname(std::string hostname);
 		std::string getRealname();
-		void setRealname(std::string realname);
 		std::string getHostname();
-		void setFd(int fd);
 		int getFd();
 		bool getAuth();
 		int getMode();
+		void setUsername(std::string username);
+		void setNickname(std::string nickname);
+		void setHostname(std::string hostname);
+		void setRealname(std::string realname);
+		void setFd(int fd);
 		void setAuth(bool auth);
 		void setMode(int mode);
+		void setAuths(std::string command, bool auth);
+		Auth *getAuths();
+		bool checkAuths();
 };
 
 #endif

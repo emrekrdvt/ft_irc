@@ -7,6 +7,7 @@
 #include "Server.hpp"
 
 class Server;
+class User;
 
 namespace utils
 {
