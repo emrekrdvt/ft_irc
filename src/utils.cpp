@@ -66,7 +66,6 @@ namespace utils
 	}
 	std::string getColor(int fd)
 	{
-		srand(time(NULL));
 		std::string colors[] = {RED, YELLOW, BLUE};
 		std::string color = colors[fd % 3];
 		return color;

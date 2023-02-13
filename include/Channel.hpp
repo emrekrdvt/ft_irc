@@ -26,6 +26,7 @@ class Channel
 		std::vector<User *> getOperators();
 		User *getOwner();
 		User *getUser(User *user);
+		User *getOperator(User *user);
 };
 
 #endif

@@ -33,36 +33,36 @@ namespace check
 			error("Port must be a number", PORTNUMBERERROR);
 		}
 	}
-	bool checkNick(User *user, std::string nickname, Server *server)
+	bool checkNick(std::string message, User *user, Server *server)
 	{
-		if (nickname == "")
+		if (message == "")
 		{
 			numeric::sendNumeric(ERR_NONICKNAMEGIVEN, user, server);
 			return false;
 		}
-		if (server->getUser(nickname) != NULL)
+		if (server->getUser(message) != NULL)
 		{
-			numeric::sendNumeric(ERR_NICKNAMEINUSE(nickname), user, server);
+			numeric::sendNumeric(ERR_NICKNAMEINUSE(message), user, server);
 			return false;
 		}
-		if (isnumber(nickname[0]) == 1)
+		if (isnumber(message[0]) == 1)
 		{
-			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(message), user, server);
 			return false;
 		}
-		if (nickname.size() > 30)
+		if (message.size() > 30)
 		{
-			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(message), user, server);
 			return false;
 		}
-		if (nickname.find_first_of(" \t\r\n\v\f") != std::string::npos)
+		if (message.find_first_of(" \t\r\n\v\f") != std::string::npos)
 		{
-			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(message), user, server);
 			return false;
 		}
-		if (nickname.find_first_not_of(VALIDCHARS) != std::string::npos)
+		if (message.find_first_not_of(VALIDCHARS) != std::string::npos)
 		{
-			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(nickname), user, server);
+			numeric::sendNumeric(ERR_ERRONEUSNICKNAME(message), user, server);
 			return false;
 		}
 		return true;
@@ -115,6 +115,48 @@ namespace check
 		user->setUsername(username);
 		user->setHostname(hostname);
 		user->setMode(mode);
+		return true;
+	}
+	bool checkJoin(std::string message, User *user, Server *server)
+	{
+		Execute exec;
+		int fd = user->getFd();
+		std::string command = "JOIN";
+		if (message.find(",") != std::string::npos)
+		{
+			std::vector<std::string> channels = utils::split(message, ",");
+			std::vector<std::string>::iterator it = channels.begin();
+			std::vector<std::string>::iterator ite = channels.end();
+			while (it != ite)
+			{
+				std::cout << "JOIN " + *it << std::endl;
+				exec.execute(fd, server, "JOIN " + *it);
+				it++;
+			}
+			if (it == ite)
+				return false;
+		}
+		if (message == "")
+		{
+			numeric::sendNumeric(ERR_NEEDMOREPARAMS(command), user, server);
+			return false;
+		}
+		if (message == "0")
+		{
+			//do
+			return false;
+		}
+		if (message[0] != '#')
+		{
+			numeric::sendNumeric(ERR_NOSUCHCHANNEL(command), user, server);
+			return false;
+		}
+		if (message.length() > 50)
+		{
+			numeric::sendNumeric(ERR_NOSUCHCHANNEL(command), user, server);
+			return false;
+		}
+		
 		return true;
 	}
 }

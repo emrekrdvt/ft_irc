@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Server.hpp"
 #include "User.hpp"
+#include "Execute.hpp"
 
 #define VALIDCHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]\\`_^{|}-"
 #define USAGEERROR 1
@@ -28,8 +29,9 @@ namespace check
 	void checkSocket(int sock, std::string function, int exitCode);
 	void checkArgs(int argc, char *argv[]);
 	void checkRecv(int fd, char *buffer, int size);
-	bool checkNick(User *user, std::string nickname, Server *server);
+	bool checkNick(std::string message, User *user, Server *server);
 	bool checkUser(std::string message, User *user, Server *server);
+	bool checkJoin(std::string message, User *user, Server *server);
 }
 
 #endif

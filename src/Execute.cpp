@@ -15,11 +15,15 @@ Execute::Execute(){
 	//this->commands.push_back(Command("WHO", &Execute::who));
 	//this->commands.push_back(Command("NOTICE", &Execute::notice));
 	//this->commands.push_back(Command("MODE", &Execute::mode));
+	//this->commands.push_back(Command("LIST", &Execute::list));
+	//this->commands.push_back(Command("TOPIC", &Execute::topic));
 }
 
 void Execute::join(int &fd, Server *server, std::string message){
 	Channel *channel = server->getChannel(message);
 	User *user = server->getUser(fd);
+	if (check::checkJoin(message, user, server) == false)
+		return ;
 	if (channel == NULL){
 		channel = new Channel(message);
 		server->addChannel(channel);
@@ -27,12 +31,31 @@ void Execute::join(int &fd, Server *server, std::string message){
 		channel->setOwner(user);
 		channel->addOperator(user);
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
+		server->sender(fd, utils::getPrefix(user) + " MODE " + message + " +o " + user->getNickname());
+		return ;
 	}
-	else if (channel->getUser(user) == NULL)
+	if (channel->getUser(user) == NULL)
 	{
-		channel->addUser(user);
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
+		channel->addUser(user);
 	}
+	std::string nicknames = "";
+	std::string nickname = user->getNickname();	
+	std::string channelName = channel->getName();
+	std::vector<User *> users = channel->getUsers();
+	for (std::vector<User *>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		int toSend = (*it)->getFd();
+		if (toSend != fd)
+			server->sender(toSend, utils::getPrefix(user) + " JOIN " + message);
+		if (it != users.begin())
+			nicknames += " ";
+		if (channel->getOperator((*it)) != NULL)
+			nicknames += "@";
+		nicknames += (*it)->getNickname();
+	}
+	numeric::sendNumeric(RPL_NAMEREPLY(nickname, channelName, nicknames), user, server);
+	numeric::sendNumeric(RPL_ENDOFNAMES(nickname, channelName), user, server);
 }
 
 void Execute::part(int &fd, Server *server, std::string message){
@@ -49,7 +72,7 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 
 void Execute::nick(int &fd, Server *server, std::string message){
 	User *user = server->getUser(fd);
-	if (check::checkNick(user, message, server) == false)
+	if (check::checkNick(message, user, server) == false)
 		return ;
 	if (user->getAuth() == true)
         server->sender(fd, utils::getPrefix(user) + " NICK " + message);

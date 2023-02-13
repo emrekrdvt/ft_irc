@@ -91,3 +91,16 @@ User *Channel::getUser(User *user)
 	}
 	return (NULL);
 }
+
+User *Channel::getOperator(User *user)
+{
+	std::vector<User *>::iterator it = this->operators.begin();
+	std::vector<User *>::iterator ite = this->operators.end();
+	while (it != ite)
+	{
+		if (*it == user)
+			return (*it);
+		it++;
+	}
+	return (NULL);
+}
