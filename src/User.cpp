@@ -140,3 +140,13 @@ Channel *User::getChannel(std::string name)
 	}
 	return (NULL);
 }
+
+bool User::getCap()
+{
+	return (this->cap);
+}
+
+void User::setCap(bool cap)
+{
+	this->cap = cap;
+}

@@ -18,6 +18,7 @@ namespace check
 	bool checkJoin(std::string message, User *user, Server *server);
 	bool checkPart(std::string message, User *user, Server *server);
 	bool checkTopic(std::string message, User *user, Server *server);
+	bool checkKick(std::string message, User *user, Server *server);
 }
 
 #endif

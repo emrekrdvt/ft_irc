@@ -13,8 +13,7 @@ Execute::Execute(){
 	this->commands.push_back(Command("CAP", &Execute::cap));
 	this->commands.push_back(Command("NOTICE", &Execute::notice));
 	//this->commands.push_back(Command("WHO", &Execute::who));
-	//this->commands.push_back(Command("WHOIS", &Execute::whois));
-	//this->commands.push_back(Command("MODE", &Execute::mode));
+	//this->commands.push_back(Command("WHOIS", &Execute::whois))
 	//this->commands.push_back(Command("LIST", &Execute::list));
 	this->commands.push_back(Command("TOPIC", &Execute::topic));
 	//this->commands.push_back(Command("NAMES", &Execute::names));
@@ -201,9 +200,25 @@ void Execute::pass(int &fd, Server *server, std::string message){
 
 void Execute::kick(int &fd, Server *server, std::string message)
 {
-	(void)message;
-	(void)server;
-	(void)fd;
+	User *user = server->getUser(fd);
+	if (check::checkKick(message, user, server) == false)
+		return ;
+	std::string channelName = message.substr(0, message.find(" "));
+	std::string toKick = message.substr(message.find(" ") + 1);
+	std::string reason = "";
+	if (message.find(":") != std::string::npos)
+		reason = " " + message.substr(message.find(":"));
+	Channel *channel = server->getChannel(channelName);
+	User *userToKick = channel->getUser(toKick);
+	std::vector<User*> users = channel->getUsers();
+	for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		int toSend = (*it)->getFd();
+		server->sender(toSend, utils::getPrefix(user) + " KICK " + channelName + " " + toKick + reason);
+	}
+	channel->removeUser(userToKick);
+	userToKick->removeChannel(channel);
+	channel->removeOperator(userToKick);
 }
 
 void Execute::quit(int &fd, Server *server, std::string message){
@@ -258,24 +273,18 @@ void Execute::notice(int &fd, Server *server, std::string message){
 	}
 }
 
-void Execute::mode(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
-}
-
 void Execute::cap(int &fd, Server *server, std::string message){
-	static bool check;
+	User *user = server->getUser(fd);
 	(void)message;
-	if (check == false)
+	if (user->getCap() == false)
 	{
 		server->sender(fd, "CAP * LS :multi-prefix sasl");
-		check = true;
+		user->setCap(true);
 	}
 	else
 	{
 		server->sender(fd, "CAP * ACK multi-prefix");
-		check = false;
+		user->setCap(false);
 	}
 }
 
