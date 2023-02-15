@@ -108,3 +108,35 @@ Auth *User::getAuths()
 {
 	return (this->auths);
 }
+
+std::vector<Channel *> User::getChannels()
+{
+	return (this->channels);
+}
+
+void User::addChannel(Channel *channel)
+{
+	this->channels.push_back(channel);
+}
+
+void User::removeChannel(Channel *channel)
+{
+	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		if (*it == channel)
+		{
+			channels.erase(it);
+			break;
+		}
+	}
+}
+
+Channel *User::getChannel(std::string name)
+{
+	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		if ((*it)->getName() == name)
+			return (*it);
+	}
+	return (NULL);
+}

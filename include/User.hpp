@@ -1,7 +1,11 @@
 #ifndef USER_HPP
 # define USER_HPP
 
+# include "Channel.hpp"
 # include <iostream>
+# include <vector>
+
+class Channel;
 
 typedef std::pair<std::string, bool> Auth;
 
@@ -13,9 +17,11 @@ class User
 		std::string hostname;
 		std::string realname;
 		int	fd;
-		bool auth;
 		int mode;
+		bool auth;
+		bool cap;
 		Auth auths[3];
+		std::vector<Channel *> channels;
 	public:
 		User();
 		User(int fd);
@@ -27,6 +33,8 @@ class User
 		int getFd();
 		bool getAuth();
 		int getMode();
+		bool getCap();
+		std::vector<Channel *> getChannels();
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
 		void setHostname(std::string hostname);
@@ -34,9 +42,13 @@ class User
 		void setFd(int fd);
 		void setAuth(bool auth);
 		void setMode(int mode);
+		void setCap(bool cap);
 		void setAuths(std::string command, bool auth);
 		Auth *getAuths();
 		bool checkAuths();
+		void addChannel(Channel *channel);
+		void removeChannel(Channel *channel);
+		Channel *getChannel(std::string name);
 };
 
 #endif

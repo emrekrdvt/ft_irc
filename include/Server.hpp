@@ -8,7 +8,7 @@
 #include <poll.h>
 #include <fcntl.h>
 #include "User.hpp"
-#include "check.hpp"
+#include "error.hpp"
 #include "utils.hpp"
 #include "auth.hpp"
 #include "Execute.hpp"

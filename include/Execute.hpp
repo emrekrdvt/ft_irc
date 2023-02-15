@@ -4,6 +4,7 @@
 #include <iostream>
 #include "numeric.hpp"
 #include "Server.hpp"
+#include "check.hpp"
 
 class Server;
 

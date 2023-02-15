@@ -2,7 +2,10 @@
 # define CHANNEL_HPP
 
 #include "User.hpp"
+#include <iostream>
 #include <vector>
+
+class User;
 
 class Channel
 {

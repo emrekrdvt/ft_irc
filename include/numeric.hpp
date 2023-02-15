@@ -25,13 +25,11 @@ typedef std::pair<std::string, std::string> Numeric;
 #define ERR_NONICKNAMEGIVEN numeric::makeNumeric("431", ":No nickname given")
 #define ERR_ERRONEUSNICKNAME(nick) numeric::makeNumeric("432", nick + " :Erroneus nickname")
 #define ERR_NICKNAMEINUSE(nick) numeric::makeNumeric("433", nick + " :Nickname is already in use")
+#define ERR_NOTONCHANNEL(channel) numeric::makeNumeric("442", channel + " :You're not on that channel")
 #define ERR_NOTREGISTERED numeric::makeNumeric("451", ":You have not registered")
 #define ERR_NEEDMOREPARAMS(cmd) numeric::makeNumeric("461", cmd + " :Not enough parameters")
 #define ERR_ALREADYREGISTRED numeric::makeNumeric("462", ":Unauthorized command (already registered)")
 #define ERR_PASSWDMISMATCH numeric::makeNumeric("464", ":Password incorrect")
-
-
-
 
 namespace numeric
 {

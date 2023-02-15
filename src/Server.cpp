@@ -6,21 +6,21 @@ Server::Server(int port, std::string pass) : max_users(32), port(port)
 	int on = 1;
 	this->server_pass = pass;
 	this->sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	check::checkSocket(this->sockfd, "socket", SOCKETERROR);
+	error::checkSocket(this->sockfd, "socket", SOCKETERROR);
 	sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(this->port);
 	rtn = bind(this->sockfd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
-	check::checkSocket(rtn, "bind", BINDERROR);
+	error::checkSocket(rtn, "bind", BINDERROR);
 	rtn = listen(this->sockfd, this->max_users);
-	check::checkSocket(rtn, "listen", LISTENERROR);
+	error::checkSocket(rtn, "listen", LISTENERROR);
 	rtn = setsockopt(this->sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-	check::checkSocket(rtn, "setsockopt", SETSOCKOPTERROR);
+	error::checkSocket(rtn, "setsockopt", SETSOCKOPTERROR);
 	rtn = fcntl(this->sockfd, F_SETFL, O_NONBLOCK);
-	check::checkSocket(rtn, "fcntl", FCNTLERROR);
+	error::checkSocket(rtn, "fcntl", FCNTLERROR);
 	rtn = listen(sockfd, this->max_users);
-	check::checkSocket(rtn, "listen", LISTENERROR);
+	error::checkSocket(rtn, "listen", LISTENERROR);
 }	
 
 int Server::sender(int &fd, std::string msg)
@@ -41,7 +41,7 @@ int Server::handle_buffer(int &fd)
 	while (!strstr(buffer, "\n")) 
 	{
 		memset(buffer, 0, 1024);
-		check::checkRecv(fd, buffer, 1024);
+		error::checkRecv(fd, buffer, 1024);
 		message.append(buffer);
 	}
 	message = utils::trimBuffer(message);
@@ -74,7 +74,7 @@ void Server::run()
 	while (true)
 	{
 		int ready = poll(&fds[0], fds.size(), 1);
-		check::checkSocket(ready, "poll", POLLERROR);
+		error::checkSocket(ready, "poll", POLLERROR);
 		if (ready == 0)
 			continue;
 		else
@@ -83,9 +83,9 @@ void Server::run()
 			{
 				struct sockaddr_in client_address;
 				int client_sockfd = accept(this->sockfd, reinterpret_cast<sockaddr*>(&client_address), reinterpret_cast<socklen_t*>(&client_address));
-				check::checkSocket(client_sockfd, "accept", ACCEPTERROR);
+				error::checkSocket(client_sockfd, "accept", ACCEPTERROR);
 				rtn = fcntl(client_sockfd, F_SETFL, O_NONBLOCK);
-				check::checkSocket(rtn, "fcntl", FCNTLERROR);
+				error::checkSocket(rtn, "fcntl", FCNTLERROR);
 				pollfd temp;
 				temp.fd = client_sockfd;
 				temp.events = POLLIN;
@@ -169,7 +169,7 @@ void Server::setHostname()
 {
 	char hostname_c[1024];
 	int rtn = gethostname(hostname_c, 1024);
-	check::checkSocket(rtn, "gethostname", GETHOSTNAMEERROR);
+	error::checkSocket(rtn, "gethostname", GETHOSTNAMEERROR);
 	this->hostname = hostname_c;
 }
 

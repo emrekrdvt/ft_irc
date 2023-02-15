@@ -66,8 +66,8 @@ namespace utils
 	}
 	std::string getColor(int fd)
 	{
-		std::string colors[] = {RED, YELLOW, BLUE};
-		std::string color = colors[fd % 3];
+		std::string colors[] = {RED, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BLACK};
+		std::string color = colors[fd % 7];
 		return color;
 	}
 }

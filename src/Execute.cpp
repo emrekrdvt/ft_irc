@@ -12,8 +12,8 @@ Execute::Execute(){
 	this->commands.push_back(Command("PASS", &Execute::pass));
 	this->commands.push_back(Command("USER", &Execute::user));
 	this->commands.push_back(Command("CAP", &Execute::cap));
-	//this->commands.push_back(Command("WHO", &Execute::who));
 	this->commands.push_back(Command("NOTICE", &Execute::notice));
+	//this->commands.push_back(Command("WHO", &Execute::who));
 	//this->commands.push_back(Command("MODE", &Execute::mode));
 	//this->commands.push_back(Command("LIST", &Execute::list));
 	//this->commands.push_back(Command("TOPIC", &Execute::topic));
@@ -32,12 +32,14 @@ void Execute::join(int &fd, Server *server, std::string message){
 		channel->addOperator(user);
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
 		server->sender(fd, utils::getPrefix(user) + " MODE " + message + " +o " + user->getNickname());
+		user->addChannel(channel);
 		return ;
 	}
 	if (channel->getUser(user) == NULL)
 	{
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
 		channel->addUser(user);
+		user->addChannel(channel);
 	}
 	std::string nicknames = "";
 	std::string nickname = user->getNickname();	
@@ -59,9 +61,28 @@ void Execute::join(int &fd, Server *server, std::string message){
 }
 
 void Execute::part(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
+	Execute exec;
+	std::string channelName = message.substr(0, message.find(" "));
+	std::string msg = message.substr(message.find(":") + 1);
+	Channel *channel = server->getChannel(channelName);
+	User *user = server->getUser(fd);
+	if (check::checkPart(channelName, user, server) == false)
+		return ;
+	channel->removeUser(user);
+	user->removeChannel(channel);
+	exec.execute(fd, server, "PRIVMSG " + channelName + " :" + msg);
+	server->sender(fd, utils::getPrefix(user) + " PART " + channelName);
+	std::vector<User*> users = channel->getUsers();
+	for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		int toSend = (*it)->getFd();
+		server->sender(toSend, utils::getPrefix(user) + " PART " + channelName);
+	}
+	if (channel->getUsers().size() == 0)
+	{
+		server->removeChannel(channel);
+		delete channel;
+	}
 }
 
 void Execute::privmsg(int &fd, Server *server, std::string message){
@@ -141,17 +162,9 @@ void Execute::quit(int &fd, Server *server, std::string message){
 }
 
 void Execute::ping(int &fd, Server *server, std::string message){
-	if (message == "")
-	{
-		numeric::sendNumeric(ERR_NOORIGIN, server->getUser(fd), server);
-		return ;
-	}
-	if (message != server->getHostname())
-	{
-		numeric::sendNumeric(ERR_NOSUCHSERVER(message), server->getUser(fd), server);
-		return ;
-	}
-	server->sender(fd, "PONG " + message);
+	(void)message;
+	(void)server;
+	(void)fd;
 }
 
 void Execute::user(int &fd, Server *server, std::string message){
@@ -170,8 +183,6 @@ void Execute::who(int &fd, Server *server, std::string message){
 void Execute::notice(int &fd, Server *server, std::string message){
 	std::string toWho = message.substr(0, message.find(" "));
 	std::string msg = message.substr(message.find(" ") + 1);
-	std::cout << toWho << std::endl;
-	std::cout << msg << std::endl;
 
 	int recvFd = server->getUser(toWho)->getFd();
 

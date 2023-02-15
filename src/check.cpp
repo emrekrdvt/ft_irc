@@ -2,37 +2,6 @@
 
 namespace check
 {
-	void error(std::string msg, int exitCode)
-	{
-		std::cerr << "Error: " << msg << std::endl;
-		std::cerr << "Exiting with code " << exitCode << std::endl;
-		exit(exitCode);
-	}
-	void checkSocket(int sock, std::string function, int exitCode)
-	{
-		if (sock == -1)
-			error(function + "() didn't work as excepted", exitCode);
-	}
-	void checkRecv(int fd, char *buffer, int size)
-	{
-		if (recv(fd, buffer, size, 0) < 0) {
-			if (errno != EWOULDBLOCK)
-				error("recv() didn't work as excepted", RECVERROR);
-		}
-	}
-	void checkArgs(int argc, char *argv[])
-	{
-		std::string usage = "Usage: " + std::string(argv[0]) + " <port> <password>";
-		if (argc != 3)
-			error(usage , USAGEERROR);
-		try {
-			int port = std::stoi(argv[1]);
-			if (port < 1024 || port > 65535)
-				error("Port must be between 1024 and 65535", PORTERROR);
-		} catch (std::exception &e) {
-			error("Port must be a number", PORTNUMBERERROR);
-		}
-	}
 	bool checkNick(std::string message, User *user, Server *server)
 	{
 		if (message == "")
@@ -122,6 +91,11 @@ namespace check
 		Execute exec;
 		int fd = user->getFd();
 		std::string command = "JOIN";
+		if (message == "")
+		{
+			numeric::sendNumeric(ERR_NEEDMOREPARAMS(command), user, server);
+			return false;
+		}
 		if (message.find(",") != std::string::npos)
 		{
 			std::vector<std::string> channels = utils::split(message, ",");
@@ -133,17 +107,18 @@ namespace check
 				exec.execute(fd, server, "JOIN " + *it);
 				it++;
 			}
-			if (it == ite)
-				return false;
-		}
-		if (message == "")
-		{
-			numeric::sendNumeric(ERR_NEEDMOREPARAMS(command), user, server);
 			return false;
 		}
-		if (message == "0")
+		if (message == "#0")
 		{
-			//do
+			std::vector<Channel *> channels = user->getChannels();
+			std::vector<Channel *>::iterator it = channels.begin();
+			std::vector<Channel *>::iterator ite = channels.end();
+			while (it != ite)
+			{
+				exec.execute(fd, server, "PART " + (*it)->getName());
+				it++;
+			}
 			return false;
 		}
 		if (message[0] != '#')
@@ -157,6 +132,41 @@ namespace check
 			return false;
 		}
 		
+		return true;
+	}
+	bool checkPart(std::string message, User *user, Server *server)
+	{
+		Execute exec;
+		std::string command = "PART";
+		int fd = user->getFd();
+		if (message == "")
+		{
+			numeric::sendNumeric(ERR_NEEDMOREPARAMS(command), user, server);
+			return false;
+		}
+		std::string partMessage = message.substr(message.find(":"));
+		if (message.find(",") != std::string::npos)
+		{
+			std::vector<std::string> channels = utils::split(message, ",");
+			std::vector<std::string>::iterator it = channels.begin();
+			std::vector<std::string>::iterator ite = channels.end();
+			while (it != ite)
+			{
+				exec.execute(fd, server, "PART " + *it + " " + partMessage);
+				it++;
+			}
+			return false;
+		}
+		if (server->getChannel(message) == NULL)
+		{
+			numeric::sendNumeric(ERR_NOSUCHCHANNEL(command), user, server);
+			return false;
+		}
+		if (user->getChannel(message) == NULL)
+		{
+			numeric::sendNumeric(ERR_NOTONCHANNEL(command), user, server);
+			return false;
+		}
 		return true;
 	}
 }
