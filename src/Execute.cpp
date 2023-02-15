@@ -7,7 +7,6 @@ Execute::Execute(){
     this->commands.push_back(Command("PRIVMSG", &Execute::privmsg));
     this->commands.push_back(Command("QUIT", &Execute::quit));
 	this->commands.push_back(Command("NICK", &Execute::nick));
-	this->commands.push_back(Command("PING", &Execute::ping));
 	this->commands.push_back(Command("KICK", &Execute::kick));
 	this->commands.push_back(Command("PASS", &Execute::pass));
 	this->commands.push_back(Command("USER", &Execute::user));
@@ -101,7 +100,7 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 		Channel *channel = server->getChannel(channelName);
 		if (channel == NULL)
 		{
-			server->sender(fd, "ERROR :No such channel");
+			numeric::sendNumeric(ERR_NOSUCHCHANNEL(channelName), user, server);
 			return ;
 		}
 		std::vector<User*> users = channel->getUsers();
@@ -120,7 +119,7 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 		User *user = server->getUser(toWho);
 		if (user == NULL)
 		{
-			server->sender(fd, "ERROR :No such user");
+			numeric::sendNumeric(ERR_NOSUCHNICK(toWho), server->getUser(fd), server);
 			return ;
 		}
 		else
@@ -172,12 +171,6 @@ void Execute::quit(int &fd, Server *server, std::string message){
 	exec.execute(fd, server, "JOIN #0");
 	server->removeUser(user);
 	delete user;
-}
-
-void Execute::ping(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
 }
 
 void Execute::user(int &fd, Server *server, std::string message){

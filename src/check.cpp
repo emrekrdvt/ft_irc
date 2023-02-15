@@ -148,11 +148,11 @@ namespace check
 		}
 		if (message.find(",") != std::string::npos)
 		{
+			partMessage = " " + message.substr(message.find(":"));
+			message = message.substr(0, message.find(":"));
 			std::vector<std::string> channels = utils::split(message, ",");
 			std::vector<std::string>::iterator it = channels.begin();
 			std::vector<std::string>::iterator ite = channels.end();
-			partMessage = " " + message.substr(message.find(":") + 1);
-
 			while (it != ite)
 			{
 				exec.execute(fd, server, "PART " + *it + partMessage);
@@ -161,7 +161,6 @@ namespace check
 			return false;
 		}
 		std::string channelName = message.substr(0, message.find(" "));
-		message = message.substr(message.find(" ") + 1);
 		if (server->getChannel(channelName) == NULL)
 		{
 			numeric::sendNumeric(ERR_NOSUCHCHANNEL(command), user, server);

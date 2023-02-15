@@ -18,9 +18,8 @@ typedef std::pair<std::string, std::string> Numeric;
 #define RPL_ENDOFNAMES(nick, channel) numeric::makeNumeric("366", channel + " :End of /NAMES list")
 
 //ERR
-#define ERR_NOSUCHSERVER(server) numeric::makeNumeric("402", server + " :No such server")
+#define ERR_NOSUCHNICK(nick) numeric::makeNumeric("401", nick + " :No such nick/channel")
 #define ERR_NOSUCHCHANNEL(channel) numeric::makeNumeric("403", channel + " :No such channel")
-#define ERR_NOORIGIN numeric::makeNumeric("409", ":No origin specified")
 #define ERR_UNKNOWNCOMMAND(cmd) numeric::makeNumeric("421", cmd + " :Unknown command")
 #define ERR_NONICKNAMEGIVEN numeric::makeNumeric("431", ":No nickname given")
 #define ERR_ERRONEUSNICKNAME(nick) numeric::makeNumeric("432", nick + " :Erroneus nickname")

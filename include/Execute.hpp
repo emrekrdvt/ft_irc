@@ -18,7 +18,6 @@ class Execute{
 		static void privmsg(int &fd, Server *server, std::string message);
 		static void quit(int &fd, Server *server, std::string message);
 		static void nick(int &fd, Server *server, std::string message);
-		static void ping(int &fd, Server *server, std::string message);
 		static void kick(int &fd, Server *server, std::string message);
 		static void pass(int &fd, Server *server, std::string message);
 		static void user(int &fd, Server *server, std::string message);
