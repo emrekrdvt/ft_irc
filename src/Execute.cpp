@@ -16,7 +16,7 @@ Execute::Execute(){
 	//this->commands.push_back(Command("WHOIS", &Execute::whois));
 	//this->commands.push_back(Command("MODE", &Execute::mode));
 	//this->commands.push_back(Command("LIST", &Execute::list));
-	//this->commands.push_back(Command("TOPIC", &Execute::topic));
+	this->commands.push_back(Command("TOPIC", &Execute::topic));
 	//this->commands.push_back(Command("NAMES", &Execute::names));
 	//this->commands.push_back(Command("VERSION", &Execute::version));
 	//this->commands.push_back(Command("MOTD", &Execute::motd));
@@ -39,6 +39,7 @@ void Execute::join(int &fd, Server *server, std::string message){
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
 		server->sender(fd, utils::getPrefix(user) + " MODE " + message + " +o " + user->getNickname());
 		user->addChannel(channel);
+		numeric::sendNumeric(RPL_NOTOPIC(user->getNickname(), message), user, server);
 		return ;
 	}
 	if (channel->getUser(user) == NULL)
@@ -46,6 +47,10 @@ void Execute::join(int &fd, Server *server, std::string message){
 		server->sender(fd, utils::getPrefix(user) + " JOIN " + message);
 		channel->addUser(user);
 		user->addChannel(channel);
+		if (channel->getTopic() != "")	
+			numeric::sendNumeric(RPL_TOPIC(user->getNickname(), message, channel->getTopic()), user, server);
+		else
+			numeric::sendNumeric(RPL_NOTOPIC(user->getNickname(), message), user, server);
 	}
 	std::string nicknames = "";
 	std::string nickname = user->getNickname();	
@@ -106,6 +111,29 @@ void Execute::part(int &fd, Server *server, std::string message){
 		channel->removeOperator(bot);
 		delete channel;
 	}
+}
+
+void Execute::topic(int &fd, Server *server, std::string message)
+{
+	User *user = server->getUser(fd);
+	if (check::checkTopic(message, user, server) == false)
+		return ;
+	std::string channelName = message.substr(0, message.find(" "));
+	std::string topic = message.substr(message.find(":") + 1);
+	Channel *channel = server->getChannel(channelName);
+	channel->setTopic(topic);
+	server->sender(fd, utils::getPrefix(user) + " TOPIC " + channelName + " :" + topic);
+	std::vector<User*> users = channel->getUsers();
+	for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		int toSend = (*it)->getFd();
+		if (toSend != fd)
+			server->sender(toSend, utils::getPrefix(user) + " TOPIC " + channelName + " :" + topic);
+	}
+	if (topic == "")
+		numeric::sendNumeric(RPL_NOTOPIC(user->getNickname(), channelName), user, server);
+	else
+		numeric::sendNumeric(RPL_TOPIC(user->getNickname(), channelName, topic), user, server);
 }
 
 void Execute::privmsg(int &fd, Server *server, std::string message){

@@ -25,6 +25,7 @@ class Execute{
 		static void notice(int &fd, Server *server, std::string message);
 		static void mode(int &fd, Server *server, std::string message);
 		static void cap(int &fd, Server *server, std::string message);
+		static void topic(int &fd, Server *server, std::string message);
     public:
         Execute();
         ~Execute();

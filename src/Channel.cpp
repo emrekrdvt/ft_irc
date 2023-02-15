@@ -5,6 +5,7 @@ Channel::Channel(){}
 Channel::Channel(std::string name)
 {
 	this->name = name;
+	this->topic = "";
 }
 
 Channel::~Channel(){}
@@ -148,4 +149,14 @@ User *Channel::getUser(std::string nickname)
 		it++;
 	}
 	return (NULL);
+}
+
+void Channel::setTopic(std::string topic)
+{
+	this->topic = topic;
+}
+
+std::string Channel::getTopic()
+{
+	return (this->topic);
 }

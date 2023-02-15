@@ -16,6 +16,7 @@ class Channel
 		std::vector<User *> operators;
 		User *owner;
 		std::string name;
+		std::string topic;
 	public:
 		Channel();
 		Channel(std::string name);
@@ -26,6 +27,7 @@ class Channel
 		void removeOperator(User *user);
 		void setOwner(User *user);
 		void setName(std::string name);
+		void setTopic(std::string topic);
 		std::string getName();
 		std::vector<User *> getUsers();
 		std::vector<User *> getOperators();
@@ -33,6 +35,7 @@ class Channel
 		User *getUser(User *user);
 		User *getUser(std::string nickname);
 		User *getOperator(User *user);
+		std::string getTopic();
 		void cedeOwnership(Server *server);
 };
 
