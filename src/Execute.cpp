@@ -13,10 +13,16 @@ Execute::Execute(){
 	this->commands.push_back(Command("CAP", &Execute::cap));
 	this->commands.push_back(Command("NOTICE", &Execute::notice));
 	//this->commands.push_back(Command("WHO", &Execute::who));
+	//this->commands.push_back(Command("WHOIS", &Execute::whois));
 	//this->commands.push_back(Command("MODE", &Execute::mode));
 	//this->commands.push_back(Command("LIST", &Execute::list));
 	//this->commands.push_back(Command("TOPIC", &Execute::topic));
 	//this->commands.push_back(Command("NAMES", &Execute::names));
+	//this->commands.push_back(Command("VERSION", &Execute::version));
+	//this->commands.push_back(Command("MOTD", &Execute::motd));
+	//this->commands.push_back(Command("TIME", &Execute::time));
+	//this->commands.push_back(Command("INFO", &Execute::info));
+	//this->commands.push_back(Command("OPER", &Execute::oper));
 }
 
 void Execute::join(int &fd, Server *server, std::string message){
@@ -70,8 +76,11 @@ void Execute::part(int &fd, Server *server, std::string message){
 	if (message.find(":") != std::string::npos)
 		msg = message.substr(message.find(":") + 1);
 	Channel *channel = server->getChannel(channelName);
+	if (user == channel->getOwner())
+		channel->cedeOwnership(server);
 	channel->removeUser(user);
 	user->removeChannel(channel);
+	channel->removeOperator(user);
 	if (msg != "")
 		exec.execute(fd, server, "PRIVMSG " + channelName + " :" + msg);
 	server->sender(fd, utils::getPrefix(user) + " PART " + channelName);
@@ -84,6 +93,17 @@ void Execute::part(int &fd, Server *server, std::string message){
 	if (channel->getUsers().size() == 0)
 	{
 		server->removeChannel(channel);
+		delete channel;
+		return ;
+	}
+	User *bot = channel->getUser("bot");
+	if (channel->getUsers().size() == 1 && bot != NULL)
+	{
+		int botFd = bot->getFd();
+		server->sender(botFd, utils::getPrefix(bot) + " PART " + channelName);
+		channel->removeUser(bot);
+		bot->removeChannel(channel);
+		channel->removeOperator(bot);
 		delete channel;
 	}
 }

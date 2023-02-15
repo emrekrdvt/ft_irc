@@ -2,10 +2,12 @@
 # define CHANNEL_HPP
 
 #include "User.hpp"
+#include "Server.hpp"
 #include <iostream>
 #include <vector>
 
 class User;
+class Server;
 
 class Channel
 {
@@ -29,7 +31,9 @@ class Channel
 		std::vector<User *> getOperators();
 		User *getOwner();
 		User *getUser(User *user);
+		User *getUser(std::string nickname);
 		User *getOperator(User *user);
+		void cedeOwnership(Server *server);
 };
 
 #endif
