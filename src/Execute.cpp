@@ -17,6 +17,7 @@ Execute::Execute(){
 	//this->commands.push_back(Command("MODE", &Execute::mode));
 	//this->commands.push_back(Command("LIST", &Execute::list));
 	//this->commands.push_back(Command("TOPIC", &Execute::topic));
+	//this->commands.push_back(Command("NAMES", &Execute::names));
 }
 
 void Execute::join(int &fd, Server *server, std::string message){
@@ -62,12 +63,12 @@ void Execute::join(int &fd, Server *server, std::string message){
 
 void Execute::part(int &fd, Server *server, std::string message){
 	Execute exec;
+	User *user = server->getUser(fd);
+	if (check::checkPart(message, user, server) == false)
+		return ;
 	std::string channelName = message.substr(0, message.find(" "));
 	std::string msg = message.substr(message.find(":") + 1);
 	Channel *channel = server->getChannel(channelName);
-	User *user = server->getUser(fd);
-	if (check::checkPart(channelName, user, server) == false)
-		return ;
 	channel->removeUser(user);
 	user->removeChannel(channel);
 	exec.execute(fd, server, "PRIVMSG " + channelName + " :" + msg);

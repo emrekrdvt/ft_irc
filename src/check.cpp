@@ -138,31 +138,36 @@ namespace check
 	{
 		Execute exec;
 		std::string command = "PART";
+		std::string partMessage = "";
+		
 		int fd = user->getFd();
 		if (message == "")
 		{
 			numeric::sendNumeric(ERR_NEEDMOREPARAMS(command), user, server);
 			return false;
 		}
-		std::string partMessage = message.substr(message.find(":"));
 		if (message.find(",") != std::string::npos)
 		{
 			std::vector<std::string> channels = utils::split(message, ",");
 			std::vector<std::string>::iterator it = channels.begin();
 			std::vector<std::string>::iterator ite = channels.end();
+			partMessage = " " + message.substr(message.find(":") + 1);
+
 			while (it != ite)
 			{
-				exec.execute(fd, server, "PART " + *it + " " + partMessage);
+				exec.execute(fd, server, "PART " + *it + partMessage);
 				it++;
 			}
 			return false;
 		}
-		if (server->getChannel(message) == NULL)
+		std::string channelName = message.substr(0, message.find(" "));
+		message = message.substr(message.find(" ") + 1);
+		if (server->getChannel(channelName) == NULL)
 		{
 			numeric::sendNumeric(ERR_NOSUCHCHANNEL(command), user, server);
 			return false;
 		}
-		if (user->getChannel(message) == NULL)
+		if (user->getChannel(channelName) == NULL)
 		{
 			numeric::sendNumeric(ERR_NOTONCHANNEL(command), user, server);
 			return false;
