@@ -64,14 +64,17 @@ void Execute::join(int &fd, Server *server, std::string message){
 void Execute::part(int &fd, Server *server, std::string message){
 	Execute exec;
 	User *user = server->getUser(fd);
+	std::string msg = "";
 	if (check::checkPart(message, user, server) == false)
 		return ;
 	std::string channelName = message.substr(0, message.find(" "));
-	std::string msg = message.substr(message.find(":") + 1);
+	if (message.find(":") != std::string::npos)
+		msg = message.substr(message.find(":") + 1);
 	Channel *channel = server->getChannel(channelName);
 	channel->removeUser(user);
 	user->removeChannel(channel);
-	exec.execute(fd, server, "PRIVMSG " + channelName + " :" + msg);
+	if (msg != "")
+		exec.execute(fd, server, "PRIVMSG " + channelName + " :" + msg);
 	server->sender(fd, utils::getPrefix(user) + " PART " + channelName);
 	std::vector<User*> users = channel->getUsers();
 	for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++)
@@ -157,9 +160,18 @@ void Execute::kick(int &fd, Server *server, std::string message)
 }
 
 void Execute::quit(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
+	Execute exec;
+	std::string quitMessage = message.substr(message.find(":") + 1);
+	User *user = server->getUser(fd);
+	std::vector<Channel*> channels = user->getChannels();
+	for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		Channel *channel = *it;
+		exec.execute(fd, server, "PRIVMSG " + channel->getName() + " :" + quitMessage);
+	}
+	exec.execute(fd, server, "JOIN #0");
+	server->removeUser(user);
+	delete user;
 }
 
 void Execute::ping(int &fd, Server *server, std::string message){

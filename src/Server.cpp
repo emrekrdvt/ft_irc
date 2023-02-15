@@ -186,6 +186,7 @@ void Server::removeUser(User *user)
 		if ((*it)->getFd() == user->getFd())
 		{
 			this->users.erase(it);
+			close(user->getFd());
 			break;
 		}
 	}
