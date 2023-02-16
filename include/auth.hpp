@@ -4,6 +4,8 @@
 #include "Execute.hpp"
 #include "utils.hpp"
 
+class Execute;
+
 namespace auth
 {
 	void authPassword(User *user, Server *server, std::string password);

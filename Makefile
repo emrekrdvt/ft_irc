@@ -15,7 +15,7 @@ OBJDIR = lib
 
 # Files
 
-SRCS = $(wildcard $(SRCDIR)/*.cpp)
+SRCS = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/*/*.cpp)
 
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 
