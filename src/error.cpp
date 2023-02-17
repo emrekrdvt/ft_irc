@@ -19,6 +19,8 @@ namespace error
 			if (errno != EWOULDBLOCK)
 				error("recv() didn't work as excepted", RECVERROR);
 		}
+		return ;
+
 	}
 	void checkArgs(int argc, char *argv[])
 	{

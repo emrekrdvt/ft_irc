@@ -16,6 +16,8 @@
 
 #include <iostream>
 #include <sys/socket.h>
+#include "Server.hpp"
+#include "User.hpp"
 
 namespace error
 {

@@ -16,6 +16,8 @@ void Execute::notice(int &fd, Server *server, std::string message){
 		{
 			if ((*it2)->getFd() == fd)
 			{
+				if (message.find("LAG") != std::string::npos)
+					break;
 				std::string channelName = (*it)->getName();
 				std::string nickname = (*it2)->getNickname();
 				server->sender(recvFd, utils::getPrefix(server->getUser(fd)) + " NOTICE " + channelName + " :" + msg);

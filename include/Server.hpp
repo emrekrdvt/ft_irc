@@ -14,6 +14,8 @@
 #include "Execute.hpp"
 #include "Channel.hpp"
 #include <unistd.h>
+#include <signal.h>
+
 
 class User;
 class Channel;
@@ -37,8 +39,9 @@ class Server
 	public:
 		Server(int port, std::string pass);
 		~Server();
+		sockaddr_in addr;
 		std::vector<User*> getUsers();
-		int handle_buffer(int &fd);
+		int	handle_buffer(int &fd,std::vector<struct pollfd> &fds);
 		int sender(int &fd, std::string msg);
 		void start();
 		void run();
@@ -53,7 +56,11 @@ class Server
 		std::string getCreatedTime();
 		void removeUser(User *user);
 		void removeChannel(Channel *channel);
-
+		int clientAuth( std::vector<struct pollfd> &plFd, std::vector<User> &usr, int cli);
+		int addClient(std::vector<struct pollfd> &plFd, std::vector<User> &usr, sockaddr_in *servSock, int _server_fd);
+		// void removePollfd(int index);
+		// void poll(void);
+		// void addPollfd(pollfd pollfd);
 
 };
 

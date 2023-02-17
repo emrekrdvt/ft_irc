@@ -5,6 +5,7 @@ namespace utils
 	std::string trimBuffer(std::string buffer)
 	{
 		std::string trimmed = buffer;
+		trimmed = trimmed.substr(0, trimmed.find_last_of("\r\n"));
 		trimmed.erase(trimmed.find_last_not_of("\r\n") + 1);
 		return trimmed;
 	}

@@ -7,16 +7,13 @@ void Execute::kick(int &fd, Server *server, std::string message)
 		return ;
 	std::string channelName = message.substr(0, message.find(" "));
 	std::string toKick = message.substr(message.find(" ") + 1);
-	std::string reason = "";
-	if (message.find(":") != std::string::npos)
-		reason = " " + message.substr(message.find(":"));
 	Channel *channel = server->getChannel(channelName);
 	User *userToKick = channel->getUser(toKick);
 	std::vector<User*> users = channel->getUsers();
 	for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++)
 	{
 		int toSend = (*it)->getFd();
-		server->sender(toSend, utils::getPrefix(user) + " KICK " + channelName + " " + toKick + reason);
+		server->sender(toSend, utils::getPrefix(user) + " KICK " + channelName + " " + toKick);
 	}
 	channel->removeUser(userToKick);
 	userToKick->removeChannel(channel);

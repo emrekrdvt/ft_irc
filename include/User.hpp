@@ -16,6 +16,7 @@ class User
 		std::string nickname;
 		std::string hostname;
 		std::string realname;
+		std::string message;
 		int	fd;
 		int mode;
 		bool auth;
@@ -34,10 +35,13 @@ class User
 		bool getAuth();
 		int getMode();
 		bool getCap();
+		
 		std::vector<Channel *> getChannels();
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
+		std::string &getmessage( void );
 		void setHostname(std::string hostname);
+		void setmessage( std::string message );
 		void setRealname(std::string realname);
 		void setFd(int fd);
 		void setAuth(bool auth);

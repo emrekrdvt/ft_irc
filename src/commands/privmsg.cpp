@@ -22,7 +22,7 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 			User *user2 = server->getUser(fd2);
 			if (user2->getFd() == fd)
 				continue;
-			server->sender(fd2, utils::getPrefix(user) + " PRIVMSG " + channelName + " :" + msg);
+			server->sender(fd2, utils::getPrefix(user) + " PRIVMSG " + channelName + " " + msg);
 		}
 	}
 	else
@@ -37,7 +37,7 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 		else
 		{
 			int recvFd = user->getFd();
-			server->sender(recvFd, utils::getPrefix(server->getUser(fd)) + " PRIVMSG " + toWho + " :" + msg);
+			server->sender(recvFd, utils::getPrefix(server->getUser(fd)) + " PRIVMSG " + toWho + " " + msg);
 		}
 	}
 }

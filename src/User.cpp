@@ -15,6 +15,8 @@ User::User(int fd){
 
 // Getters and setters
 
+std::string &User::getmessage( void ) { return message; }
+
 std::string User::getUsername()
 {
 	return (this->username);
@@ -130,7 +132,7 @@ void User::removeChannel(Channel *channel)
 		}
 	}
 }
-
+void User::setmessage( std::string message ) { this->message = message; }
 Channel *User::getChannel(std::string name)
 {
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)

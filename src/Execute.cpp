@@ -13,15 +13,6 @@ Execute::Execute(){
 	this->commands.push_back(Command("CAP", &Execute::cap));
 	this->commands.push_back(Command("NOTICE", &Execute::notice));
 	this->commands.push_back(Command("TOPIC", &Execute::topic));
-	//this->commands.push_back(Command("WHO", &Execute::who));
-	//this->commands.push_back(Command("WHOIS", &Execute::whois))
-	//this->commands.push_back(Command("LIST", &Execute::list));
-	//this->commands.push_back(Command("NAMES", &Execute::names));
-	//this->commands.push_back(Command("VERSION", &Execute::version));
-	//this->commands.push_back(Command("MOTD", &Execute::motd));
-	//this->commands.push_back(Command("TIME", &Execute::time));
-	//this->commands.push_back(Command("INFO", &Execute::info));
-	//this->commands.push_back(Command("OPER", &Execute::oper));
 }
 
 void Execute::who(int &fd, Server *server, std::string message){
