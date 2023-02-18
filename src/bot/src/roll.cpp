@@ -34,8 +34,7 @@ std::string rollCommand(std::string message)
 		sides += message[i];
 		i++;
 	}
-	std::cout << "sides: " << sides << std::endl;
-	std::cout << "times: " << times << std::endl;
+
 	result = roll(std::stoi(sides), std::stoi(times));
 	return result;
 }

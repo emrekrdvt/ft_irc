@@ -67,4 +67,6 @@ fclean: clean
 
 re: fclean all
 
+rebot: removebot $(BOT)
+
 .PHONY: all clean fclean re

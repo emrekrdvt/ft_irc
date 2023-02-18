@@ -108,11 +108,6 @@ User *Channel::getOperator(User *user)
 
 void Channel::cedeOwnership(Server *server)
 {
-	if (this->users.size() == 2 && this->getUser("bot") != NULL)
-	{
-		this->owner = NULL;
-		return ;
-	}
 	if (this->users.size() == 1)
 	{
 		this->owner = NULL;

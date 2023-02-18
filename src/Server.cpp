@@ -109,6 +109,7 @@ void Server::run()
 					{
 						exec.execute(fds[i].fd, this, "JOIN #0");
 						this->removeUser(this->getUser(fds[i].fd));
+						delete this->getUser(fds[i].fd);
 					}
 					fds.erase( fds.begin() + i);
 					continue;

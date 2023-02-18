@@ -30,14 +30,4 @@ void Execute::part(int &fd, Server *server, std::string message){
 		delete channel;
 		return ;
 	}
-	User *bot = channel->getUser("bot");
-	if (channel->getUsers().size() == 1 && bot != NULL)
-	{
-		int botFd = bot->getFd();
-		server->sender(botFd, utils::getPrefix(bot) + " PART " + channelName);
-		channel->removeUser(bot);
-		bot->removeChannel(channel);
-		channel->removeOperator(bot);
-		delete channel;
-	}
 }
