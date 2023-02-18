@@ -37,8 +37,10 @@ namespace auth
 	bool checkAuth(User *user, Server *server, std::string command)
 	{
 		int fd = user->getFd();
-		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK" && command != "PING" && command != "CAP")
+		if (user->getAuth() == false && command != "PASS" && command != "USER" && command != "NICK" && command != "CAP")
 		{
+			if (command == "QUIT")
+				return true;
 			numeric::sendNumeric(ERR_NOTREGISTERED, user, server);
 			Auth *auths = user->getAuths();
 			for (int i = 0; i < 3; i++)

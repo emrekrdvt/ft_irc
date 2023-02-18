@@ -19,8 +19,6 @@ Server::Server(int port, std::string pass) : max_users(MAX_USERS), port(port)
 	error::checkSocket(rtn, "setsockopt", SETSOCKOPTERROR);
 	rtn = fcntl(this->sockfd, F_SETFL, O_NONBLOCK);
 	error::checkSocket(rtn, "fcntl", FCNTLERROR);
-	rtn = listen(sockfd, this->max_users);
-	error::checkSocket(rtn, "listen", LISTENERROR);
 }	
 
 int Server::sender(int &fd, std::string msg)
@@ -31,33 +29,29 @@ int Server::sender(int &fd, std::string msg)
 	return 1;
 }
 
-int Server::handle_buffer(int &fd,std::vector<struct pollfd> &fds)
+int Server::handle_buffer(int &fd)
 {
 	std::string message;
 	Execute exec;
-	ssize_t recv_rtn;
-	char buffer[MAX_BUFFER_SIZE + 1];
 
-	memset(buffer, 0, MAX_BUFFER_SIZE + 1);
-	recv_rtn = recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-	message = buffer;
-	if (recv_rtn == 0)
+	char buffer[1024];
+	memset(buffer, 0, 1024);
+	while (!strstr(buffer, "\n")) 
 	{
-		close(fd);
-		this->removeUser(this->getUser(fd));
-		this->users.erase(this->users.begin() + fd);
-		fds.erase(fds.begin() + fd);
+		memset(buffer, 0, 1024);
+		error::checkRecv(fd, buffer, 1024);
+		message.append(buffer);
 	}
-	User *user = this->getUser(fd);
 	message = utils::trimBuffer(message);
 	std::vector<std::string> split = utils::split(message, "\n");
 	for (size_t i = 0; i < split.size(); i++)
 		utils::printClient(split[i], fd, this);
+	User *user = this->getUser(fd);
 	if (user->getAuth() == false)
 		auth::handleAuth(user, exec, message, this);
 	else
 		exec.execute(fd, this, message);
-	return (1);
+	return 1;
 }
 
 void Server::start()
@@ -115,7 +109,7 @@ void Server::run()
 					continue;
 				}
 				else
-					recv_rtn = handle_buffer(fds[i].fd, fds);
+					recv_rtn = handle_buffer(fds[i].fd);
 				if (recv_rtn == 0)
 				{
 					fds.erase(fds.begin() + i);

@@ -15,12 +15,6 @@ Execute::Execute(){
 	this->commands.push_back(Command("TOPIC", &Execute::topic));
 }
 
-void Execute::who(int &fd, Server *server, std::string message){
-	(void)message;
-	(void)server;
-	(void)fd;
-}
-
 std::string Execute::getCmd(std::string command){
     return command.substr(0, command.find(" "));
 }
@@ -40,6 +34,8 @@ void Execute::execute(int &fd, Server *server, std::string message){
 			return;
 		}
 	}
+	if (command != "PING" && command != "MODE" && command != "WHO")
+		numeric::sendNumeric(ERR_UNKNOWNCOMMAND(command), user, server);
 }
 
 Execute::~Execute(){}

@@ -40,7 +40,7 @@ class Server
 		~Server();
 		sockaddr_in addr;
 		std::vector<User*> getUsers();
-		int	handle_buffer(int &fd,std::vector<struct pollfd> &fds);
+		int	handle_buffer(int &fd);
 		int sender(int &fd, std::string msg);
 		void start();
 		void run();

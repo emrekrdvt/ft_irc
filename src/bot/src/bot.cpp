@@ -14,6 +14,7 @@ bool bot::command_handler(std::string nick, std::string command, std::string mes
         return this->send_message_to_channel(nick, "Hello, how are you!");
 	if (command == ":!ht")
 	{
+		srand(time(NULL));
 		std::string result = (rand() % 2 == 0) ? "HEAD" : "TAIL";
 		return this->send_message_to_channel(nick, result);
 	}

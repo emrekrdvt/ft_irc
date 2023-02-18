@@ -10,7 +10,8 @@ void Execute::quit(int &fd, Server *server, std::string message){
 		Channel *channel = *it;
 		exec.execute(fd, server, "PRIVMSG " + channel->getName() + " :" + quitMessage);
 	}
-	exec.execute(fd, server, "JOIN #0");
+	if (user->getAuth() == true)
+		exec.execute(fd, server, "JOIN #0");
 	server->removeUser(user);
 	delete user;
 }
