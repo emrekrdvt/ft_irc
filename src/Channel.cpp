@@ -114,21 +114,18 @@ void Channel::cedeOwnership(Server *server)
 		return ;
 	}
 	srand(time(NULL));
-	std::vector<User *>::iterator it = this->users.begin();
-	std::vector<User *>::iterator ite = this->users.end();
-	for (int i = 0; i < rand() % static_cast<int>(this->users.size()); i++)
-	{
-		if (it == ite)
-			it = this->users.begin();
-		it++;
-	}
-	this->owner = *it;
-	this->addOperator(*it);
-	it = this->users.begin();
+	std::vector<User *> temp = this->users;
+	std::vector<User *>::iterator it = temp.begin();
+	std::vector<User *>::iterator ite =temp.end();
+	temp.erase(std::remove(temp.begin(), temp.end(), this->owner), temp.end());
+	int random = rand() % temp.size();
+	this->owner = temp[random];
+	this->addOperator(this->owner);
+	it = temp.begin();
 	while (it != ite)
 	{
 		int toSend = (*it)->getFd();
-		server->sender(toSend, utils::getPrefix(*it) + " MODE " + this->name + " +o " + (*it)->getNickname());
+		server->sender(toSend, utils::getPrefix(*it) + " MODE " + this->name + " +o " + (this->owner)->getNickname());
 		it++;
 	}
 }

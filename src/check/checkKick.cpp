@@ -25,7 +25,7 @@ bool check::checkKick(std::string message, User *user, Server *server)
 		return false;
 	}
 	Channel *channel = server->getChannel(channelName);
-	if (channel->getOperator(user) == NULL)
+	if (channel->getOperator(user) == NULL && channel->getOwner() != user)
 	{
 		numeric::sendNumeric(ERR_CHANOPRIVSNEEDED(channelName), user, server);
 		return false;
