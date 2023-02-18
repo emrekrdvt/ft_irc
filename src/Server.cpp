@@ -1,8 +1,6 @@
 #include "Server.hpp"
 
-#include "Server.hpp"
-
-Server::Server(int port, std::string pass) : max_users(32), port(port) 
+Server::Server(int port, std::string pass) : max_users(MAX_USERS), port(port) 
 {
 	int rtn;
 	int on = 1;
@@ -40,6 +38,7 @@ int Server::handle_buffer(int &fd,std::vector<struct pollfd> &fds)
 	ssize_t recv_rtn;
 	char buffer[MAX_BUFFER_SIZE + 1];
 
+	memset(buffer, 0, MAX_BUFFER_SIZE + 1);
 	recv_rtn = recv(fd, buffer, MAX_BUFFER_SIZE, 0);
 	message = buffer;
 	if (recv_rtn == 0)
@@ -48,43 +47,18 @@ int Server::handle_buffer(int &fd,std::vector<struct pollfd> &fds)
 		this->removeUser(this->getUser(fd));
 		this->users.erase(this->users.begin() + fd);
 		fds.erase(fds.begin() + fd);
-		std::cout << "AAAAAA" << std::endl;
 	}
+	User *user = this->getUser(fd);
 	message = utils::trimBuffer(message);
 	std::vector<std::string> split = utils::split(message, "\n");
 	for (size_t i = 0; i < split.size(); i++)
 		utils::printClient(split[i], fd, this);
-	User *user = this->getUser(fd);
 	if (user->getAuth() == false)
 		auth::handleAuth(user, exec, message, this);
 	else
 		exec.execute(fd, this, message);
 	return (1);
 }
-// int Server::handle_buffer(int &fd)
-// {
-// 	std::string message;
-// 	Execute exec;
-
-// 	char buffer[1024];
-// 	memset(buffer, 0, 1024);
-// 	while (!strstr(buffer, "\n")) 
-// 	{
-// 		memset(buffer, 0, 1024);
-// 		error::checkRecv(fd, buffer, 1024);
-// 		message.append(buffer);
-// 	}
-// 	message = utils::trimBuffer(message);
-// 	std::vector<std::string> split = utils::split(message, "\n");
-// 	for (size_t i = 0; i < split.size(); i++)
-// 		utils::printClient(split[i], fd, this);
-// 	User *user = this->getUser(fd);
-// 	if (user->getAuth() == false)
-// 		auth::handleAuth(user, exec, message, this);
-// 	else
-// 		exec.execute(fd, this, message);
-// 	return 1;
-// }
 
 void Server::start()
 {
@@ -127,36 +101,28 @@ void Server::run()
 			for (size_t i = 1; i < fds.size(); i++)
 			{
 				if (fds[i].revents == 0)
-				{
-	
 					continue;
-				}
 				if (fds[i].revents != POLLIN)
 				{
-					
 					close(fds[i].fd);
 					if (getUser(fds[i].fd) != NULL)
 					{
 						exec.execute(fds[i].fd, this, "JOIN #0");
- 						this->removeUser(this->getUser(fds[i].fd));
+						this->removeUser(this->getUser(fds[i].fd));
 					}
-					std::cout << "SEG AMK" << std::endl;
- 					fds.erase( fds.begin() + i);
-					
+					fds.erase( fds.begin() + i);
 					continue;
 				}
 				else
 					recv_rtn = handle_buffer(fds[i].fd, fds);
-				std::cout << recv_rtn << std::endl;
 				if (recv_rtn == 0)
-					{
-						fds.erase(fds.begin() + i);
-						continue;
-					}
+				{
+					fds.erase(fds.begin() + i);
+					continue;
+				}
 			}
 		}
 	}
-	
 }
 
 Server::~Server(){}
@@ -253,4 +219,9 @@ void Server::removeChannel(Channel *channel)
 			return;
 		}
 	}
+}
+
+int Server::getFd()
+{
+	return this->sockfd;
 }

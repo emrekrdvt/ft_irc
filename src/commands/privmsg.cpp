@@ -27,7 +27,6 @@ void Execute::privmsg(int &fd, Server *server, std::string message){
 	}
 	else
 	{
-
 		User *user = server->getUser(toWho);
 		if (user == NULL)
 		{

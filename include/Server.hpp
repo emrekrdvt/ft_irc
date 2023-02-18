@@ -24,7 +24,6 @@ class Channel;
 # define MAX_USERS 1000
 # define MAX_BUFFER_SIZE 512
 
-
 class Server
 {
 	private:
@@ -56,12 +55,7 @@ class Server
 		std::string getCreatedTime();
 		void removeUser(User *user);
 		void removeChannel(Channel *channel);
-		int clientAuth( std::vector<struct pollfd> &plFd, std::vector<User> &usr, int cli);
-		int addClient(std::vector<struct pollfd> &plFd, std::vector<User> &usr, sockaddr_in *servSock, int _server_fd);
-		// void removePollfd(int index);
-		// void poll(void);
-		// void addPollfd(pollfd pollfd);
-
+		int getFd();
 };
 
 

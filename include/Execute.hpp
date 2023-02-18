@@ -5,6 +5,7 @@
 #include "numeric.hpp"
 #include "Server.hpp"
 #include "check.hpp"
+#include "utils.hpp"
 
 class Server;
 
