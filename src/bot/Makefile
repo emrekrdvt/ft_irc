@@ -30,7 +30,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	@$(CXX) $(CPPFLAGS) -o $(NAME) $(OBJS)
 	@echo "$(GREEN)bot compiled"
-	@echo "$(DEFAULT)Usage: ./bot"
+	@echo "$(DEFAULT)Usage: ./bot <hostname> <port> <password>"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@echo "$(BLUE)Compiling $<"

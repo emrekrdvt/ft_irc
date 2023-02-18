@@ -9,7 +9,7 @@ bool bot::command_handler(std::string nick, std::string command, std::string mes
 {
 	command = trim(command);
 	if (command == ":!help")
-		return this->send_message_to_channel(nick, "I can help you on !roll !hello !ht ! commands");
+		return this->send_message_to_channel(nick, "I can help you on !roll !hello !ht !randvid commands");
     if (command == ":!hello")
         return this->send_message_to_channel(nick, "Hello, how are you!");
 	if (command == ":!ht")
@@ -18,7 +18,7 @@ bool bot::command_handler(std::string nick, std::string command, std::string mes
 		return this->send_message_to_channel(nick, result);
 	}
 
-	if (command == ":!roll")
+	if (command == ":!roll")	
 	{
 		std::cout << "message: " << message << std::endl;
 		try
@@ -34,6 +34,15 @@ bool bot::command_handler(std::string nick, std::string command, std::string mes
 		{
 			return this->send_message_to_channel(nick, "Invalid roll command format\nExample: !roll 2d6");
 		}
+	}
+	if (command == ":!randvid")
+	{
+		srand(time(NULL));
+		std::vector<std::string> lines = read_file("./src/bot/videos.txt");
+		if (lines.size() == 0)
+			return this->send_message_to_channel(nick, "Error: Could not get random video");
+		std::string result = lines[rand() % lines.size()];
+		return this->send_message_to_channel(nick, result);
 	}
 	return false;
 }

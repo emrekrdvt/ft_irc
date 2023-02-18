@@ -7,12 +7,6 @@ bool check::checkNick(std::string message, User *user, Server *server)
 			numeric::sendNumeric(ERR_NONICKNAMEGIVEN, user, server);
 			return false;
 		}
-		if (message == "bot")
-		{
-			int fd = user->getFd();
-			server->sender(fd, "ERROR :You cannot use this nickname");
-			return false;
-		}
 		if (server->getUser(message) != NULL)
 		{
 			numeric::sendNumeric(ERR_NICKNAMEINUSE(message), user, server);
