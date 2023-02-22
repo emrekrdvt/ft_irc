@@ -71,6 +71,10 @@ with each other.
 3- USER nick 0 IP :nick
 ```
 
+# Bot usage / commands 
+- !roll !hello !ht !randvid
+[!ss](https://i.hizliresim.com/l26srib.png)
+
 # Helpful Links
 - [IRC GOD](https://ircgod.com/docs/irc/to_know/)
 - [Internet Relay Chat Protocol](https://datatracker.ietf.org/doc/html/rfc1459#section-)
