@@ -73,7 +73,7 @@ with each other.
 
 # Bot usage / commands 
 - !roll !hello !ht !randvid
-[!ss](https://i.hizliresim.com/l26srib.png)
+![ss](https://i.hizliresim.com/l26srib.png)
 
 # Helpful Links
 - [IRC GOD](https://ircgod.com/docs/irc/to_know/)
