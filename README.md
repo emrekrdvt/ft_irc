@@ -75,6 +75,10 @@ with each other.
 - !roll !hello !ht !randvid
 ![ss](https://i.hizliresim.com/l26srib.png)
 
+# Our reference
+- [KVIrc protocol specification](http://www.kvirc.net/doc/doc_rfc2812.html)
+- [Socket programming](https://www.geeksforgeeks.org/socket-programming-cc/)
+- 
 # Helpful Links
 - [IRC GOD](https://ircgod.com/docs/irc/to_know/)
 - [Internet Relay Chat Protocol](https://datatracker.ietf.org/doc/html/rfc1459#section-)
@@ -82,6 +86,5 @@ with each other.
 - [Internet Relay Chat Channel Managment](https://datatracker.ietf.org/doc/html/rfc2811#)
 - [Internet Relay Chat Client Protocol](https://datatracker.ietf.org/doc/html/rfc2812)
 - [Internet Relay Chat Server Protocol](https://datatracker.ietf.org/doc/html/rfc2813)
-- [KVIrc protocol specification](http://www.kvirc.net/doc/doc_rfc2812.html)
 - [Helpful](http://chi.cs.uchicago.edu/chirc/assignment3.html)
-- [Protocols](link)
+
